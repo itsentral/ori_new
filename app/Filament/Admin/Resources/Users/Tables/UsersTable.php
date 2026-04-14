@@ -20,13 +20,23 @@ class UsersTable
                     ->searchable(),
                 TextColumn::make('email')
                     ->label('Email address')
+                    ->default('-')
                     ->searchable(),
                 TextColumn::make('full_name')
                     ->searchable(),
                 TextColumn::make('nick_name')
+                ->default('-')
                     ->searchable(),
-                TextColumn::make('telephone')
-                    ->searchable(),
+                // TextColumn::make('telephone')
+                // ->default('-')
+                //     ->searchable(),                
+                TextColumn::make('roles.name')
+                ->badge() 
+                ->label('Role')
+                ->colors([
+                    'primary',
+                ])
+                ->separator(','),
                 ToggleColumn::make('is_active')
                     ->label('Status')
                     ->onColor('success')

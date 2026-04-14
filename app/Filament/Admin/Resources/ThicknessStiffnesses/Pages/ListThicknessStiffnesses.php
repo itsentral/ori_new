@@ -16,7 +16,7 @@ class ListThicknessStiffnesses extends ListRecords
 {
     protected static string $resource = ThicknessStiffnessResource::class;
 
-    protected const STIFFNESSES = [500, 1250, 2500, 10000];
+    protected const STIFFNESSES = [1250, 2500, 5000, 10000];
 
     protected function getHeaderActions(): array
     {

@@ -23,14 +23,12 @@ class UserInfolist
                     ->placeholder('-'),
                 TextEntry::make('telephone')
                     ->placeholder('-'),
-                TextEntry::make('avatar')
-                    ->placeholder('-'),
                 IconEntry::make('is_active')
                     ->boolean(),
-                TextEntry::make('ip')
-                    ->placeholder('-'),
-                TextEntry::make('last_login')
-                    ->dateTime()
+                    TextEntry::make('roles.name')
+                    ->label('Roles')
+                    ->badge()
+                    ->color('primary')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

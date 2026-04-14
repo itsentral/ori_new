@@ -11,7 +11,7 @@ class MasterMaterialTypesTable
     public static function configure(Table $table): Table
     {
         return $table
-        ->deferLoading()
+            ->deferLoading()
             ->columns([
                 TextColumn::make('no')
                     ->label('No')
@@ -23,7 +23,7 @@ class MasterMaterialTypesTable
                         2 => 'Non Resin',
                         default => 'Unknown',
                     })
-                    ->badge() 
+                    ->badge()
                     ->color(fn(int $state): string => match ($state) {
                         1 => 'success',
                         2 => 'warning',
@@ -33,8 +33,24 @@ class MasterMaterialTypesTable
                     ->searchable(),
                 TextColumn::make('type_name')
                     ->searchable()
+                    ->description(function ($record): ?string {
+                        $user = auth()->user();
+
+                        $showWarning = $user->hasRole('costing') || $user->hasRole('super_admin');
+
+                        if (! $showWarning) {
+                            return null;
+                        }
+
+                        $belumDiisi = blank($record->price_kurs)
+                            || blank($record->price_usd)
+                            || blank($record->price_idr);
+
+                        return $belumDiisi ? '⚠ Price reference belum diisi' : null;
+                    }),
+                // ->descriptionColor(fn ($record): string => 'warning'),
             ])
-            
+
             ->recordActions([
                 ...MasterMaterialTypeResource::getRecordActions(),
             ]);

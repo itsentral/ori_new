@@ -1,0 +1,33 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#7641
+    [34mall[39m: [
+      [34;4mSpatie\Permission\Models\Permission[39;24m {#7642
+        [34mid[39m: [35m481[39m,
+        [34mname[39m: "[32mview_master_application[39m",
+        [34mguard_name[39m: "[32mweb[39m",
+        [34mcreated_at[39m: "[32m2026-04-13 06:51:13[39m",
+        [34mupdated_at[39m: "[32m2026-04-13 06:51:13[39m",
+      },
+      [34;4mSpatie\Permission\Models\Permission[39;24m {#7639
+        [34mid[39m: [35m482[39m,
+        [34mname[39m: "[32madd_master_application[39m",
+        [34mguard_name[39m: "[32mweb[39m",
+        [34mcreated_at[39m: "[32m2026-04-13 06:51:13[39m",
+        [34mupdated_at[39m: "[32m2026-04-13 06:51:13[39m",
+      },
+      [34;4mSpatie\Permission\Models\Permission[39;24m {#7638
+        [34mid[39m: [35m483[39m,
+        [34mname[39m: "[32mmanage_master_application[39m",
+        [34mguard_name[39m: "[32mweb[39m",
+        [34mcreated_at[39m: "[32m2026-04-13 06:51:13[39m",
+        [34mupdated_at[39m: "[32m2026-04-13 06:51:13[39m",
+      },
+      [34;4mSpatie\Permission\Models\Permission[39;24m {#7637
+        [34mid[39m: [35m484[39m,
+        [34mname[39m: "[32mdelete_master_application[39m",
+        [34mguard_name[39m: "[32mweb[39m",
+        [34mcreated_at[39m: "[32m2026-04-13 06:51:13[39m",
+        [34mupdated_at[39m: "[32m2026-04-13 06:51:13[39m",
+      },
+    ],
+  }
+

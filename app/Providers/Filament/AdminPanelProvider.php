@@ -7,6 +7,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use Althinect\FilamentSpatieRolesPermissions\Resources\RoleResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -40,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([
-                Dashboard::class,
+                \App\Filament\Admin\Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
@@ -65,6 +66,9 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::STYLES_AFTER,
                 fn() => view('components.sidebar-custom-css')
             )
+            ->resources([
+                RoleResource::class,
+            ])
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
                 fn() => view('components.sidebar-search')

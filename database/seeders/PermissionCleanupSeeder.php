@@ -11,9 +11,10 @@ class PermissionCleanupSeeder extends Seeder
     public function run(): void
     {
         Permission::where('guard_name', 'api')->delete();
+
         $modules = [
+            'master_material_type',
             'master_diameter',
-            'master_material_type', 
             'master_topcoat',
             'master_thickness_external',
             'thickness_liner',
@@ -24,15 +25,27 @@ class PermissionCleanupSeeder extends Seeder
             'master_piece',
             'master_pressure_nominal',
             'master_standard_engineering',
+            'master_layer',
+            'master_application',
         ];
 
-        foreach ($modules as $module) {
-            $searchName = str_replace('_', '', $module);
-            Permission::where('name', 'like', "%{$searchName}%")->delete();
-            Permission::where('name', 'like', "%{$module}%")->delete();
+        $actions = ['view', 'add', 'manage', 'delete'];
 
-            Permission::updateOrCreate(['name' => "view_{$module}", 'guard_name' => 'web']);
-            Permission::updateOrCreate(['name' => "manage_{$module}", 'guard_name' => 'web']);
+        foreach ($modules as $module) {
+            // Hapus permission lama
+            foreach ($actions as $action) {
+                Permission::where('name', "{$action}_{$module}")->delete();
+            }
+            // Hapus manage lama jika masih ada
+            Permission::where('name', "manage_{$module}")->delete();
+
+            // Buat permission baru
+            foreach ($actions as $action) {
+                Permission::updateOrCreate([
+                    'name' => "{$action}_{$module}",
+                    'guard_name' => 'web',
+                ]);
+            }
         }
 
         $adminRole = Role::where('name', 'super_admin')->first();
@@ -40,6 +53,6 @@ class PermissionCleanupSeeder extends Seeder
             $adminRole->givePermissionTo(Permission::all());
         }
 
-        $this->command->info('Cleanup & Simplification berhasil untuk: ' . implode(', ', $modules));
+        $this->command->info('Permissions berhasil dibuat untuk: ' . implode(', ', $modules));
     }
 }
