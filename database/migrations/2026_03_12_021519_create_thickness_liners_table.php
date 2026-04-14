@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('thickness_actual');
             $table->double('thickness_teori')->default(0);
             $table->text('layers_formula')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

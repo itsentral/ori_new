@@ -19,7 +19,7 @@ class PermissionMatrixInput extends Field
         $this->modules = [
             'master_material_type'        => 'Master Material Type',
             'master_diameter'             => 'Master Diameter',
-            'master_topcoat'              => 'Master Topcoat',
+            'master_top_coat'             => 'Master Topcoat',
             'master_thickness_external'   => 'Master Thickness External',
             'thickness_liner'             => 'Thickness Liner',
             'thickness_pressure_temp'     => 'Thickness Pressure Temp',
@@ -31,6 +31,7 @@ class PermissionMatrixInput extends Field
             'master_standard_engineering' => 'Master Standard Engineering',
             'master_layer'                => 'Master Layer',
             'master_application'          => 'Master Application',
+            'thickness_calculation'       => 'Thickness Calculation'
         ];
 
         $this->default([]);
