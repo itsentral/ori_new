@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     protected array $tables = [
-        'master_resins',
         'master_standard_engineerings',
         'material_type_details',
         'material_type_engineerings',
