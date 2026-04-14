@@ -15,7 +15,7 @@ class PermissionCleanupSeeder extends Seeder
         $modules = [
             'master_material_type',
             'master_diameter',
-            'master_topcoat',
+            'master_top_coat',
             'master_thickness_external',
             'thickness_liner',
             'thickness_pressure_temp',
@@ -27,6 +27,7 @@ class PermissionCleanupSeeder extends Seeder
             'master_standard_engineering',
             'master_layer',
             'master_application',
+            'thickness_calculation'
         ];
 
         $actions = ['view', 'add', 'manage', 'delete'];
