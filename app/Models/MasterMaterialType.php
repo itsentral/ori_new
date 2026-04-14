@@ -17,12 +17,18 @@ class MasterMaterialType extends Model
         'category_types',
         'type_name',
         'remark',
+        'price_kurs',
+        'price_usd',
+        'price_idr',
         'created_by',
         'updated_by'
     ];
 
-    protected $cast = [
-        'category_types' => 'integer'
+    protected $casts = [
+        'category_types' => 'integer',
+        'price_kurs'     => 'decimal:2',
+        'price_usd'      => 'decimal:2',
+        'price_idr'      => 'decimal:2',
     ];
 
     public function engineeringDetails()

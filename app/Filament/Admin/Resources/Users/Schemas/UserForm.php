@@ -16,6 +16,10 @@ class UserForm
             ->components([
                 TextInput::make('username')
                     ->required()
+                    ->unique(ignoreRecord: true)
+                    ->validationMessages([
+                        'unique' => 'Username ini sudah digunakan, silahkan pilih username lain.',
+                    ])
                     ->maxLength(255),
 
                 TextInput::make('email')

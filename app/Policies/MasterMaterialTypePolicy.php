@@ -10,7 +10,9 @@ class MasterMaterialTypePolicy
     public function viewAny(User $user): bool
     {
         return $user->hasPermissionTo('view_master_material_type')
-            || $user->hasPermissionTo('manage_master_material_type');
+            || $user->hasPermissionTo('add_master_material_type')
+            || $user->hasPermissionTo('manage_master_material_type')
+            || $user->hasPermissionTo('delete_master_material_type');
     }
 
     public function view(User $user, MasterMaterialType $model): bool
@@ -20,7 +22,7 @@ class MasterMaterialTypePolicy
 
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('manage_master_material_type');
+        return $user->hasPermissionTo('add_master_material_type');
     }
 
     public function update(User $user, MasterMaterialType $model): bool
@@ -30,20 +32,21 @@ class MasterMaterialTypePolicy
 
     public function delete(User $user, MasterMaterialType $model): bool
     {
+        return $user->hasPermissionTo('delete_master_material_type');
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $user->hasPermissionTo('delete_master_material_type');
+    }
+
+    public function restore(User $user, MasterMaterialType $model): bool
+    {
         return $user->hasPermissionTo('manage_master_material_type');
     }
 
-    // Aksi massal Filament
-    public function deleteAny(User $user): bool
-    {
-        return $this->update($user, new MasterMaterialType());
-    }
-    public function restore(User $user, MasterMaterialType $model): bool
-    {
-        return $this->update($user, $model);
-    }
     public function forceDelete(User $user, MasterMaterialType $model): bool
     {
-        return $this->update($user, $model);
+        return $user->hasPermissionTo('delete_master_material_type');
     }
 }

@@ -11,16 +11,28 @@ class MasterDiametersTable
     public static function configure(Table $table): Table
     {
         return $table
-        ->deferLoading()
+            ->deferLoading()
             ->columns([
                 TextColumn::make('no')
                     ->label('No')
                     ->rowIndex(),
-                TextColumn::make('diameter_inch')
-                    ->searchable(),
                 TextColumn::make('diameter_mm')
-                    ->searchable(),
+                    ->searchable()
+
+                    ->sortable(query: function ($query, $direction) {
+                        return $query->orderByRaw("CAST(diameter_mm AS UNSIGNED) {$direction}");
+                    }),
+                TextColumn::make('diameter_inch')
+                    ->searchable()
+                    ->sortable(),
             ])
+
+            ->defaultSort(
+                'diameter_mm',
+                'asc',
+                fn($query) =>
+                $query->orderByRaw('diameter_mm + 0 ASC')
+            )
             ->filters([
                 //
             ])

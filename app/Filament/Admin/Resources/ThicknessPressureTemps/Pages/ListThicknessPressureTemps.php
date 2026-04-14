@@ -30,6 +30,7 @@ class ListThicknessPressureTemps extends ListRecords
     public function getTabs(): array
     {
         return [
+            'all' => Tab::make('All'),
             '65deg' => Tab::make('65°C')
                 ->modifyQueryUsing(
                     fn(Builder $query) => $query

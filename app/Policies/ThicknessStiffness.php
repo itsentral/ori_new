@@ -9,7 +9,10 @@ class ThicknessStiffnessPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view_thickness_stiffness') || $user->hasPermissionTo('manage_thickness_stiffness');
+        return $user->hasPermissionTo('view_thickness_stiffness')
+            || $user->hasPermissionTo('add_thickness_stiffness')
+            || $user->hasPermissionTo('manage_thickness_stiffness')
+            || $user->hasPermissionTo('delete_thickness_stiffness');
     }
 
     public function view(User $user, ThicknessStiffness $model): bool
@@ -17,10 +20,33 @@ class ThicknessStiffnessPolicy
         return $this->viewAny($user);
     }
 
-    public function create(User $user): bool { return $user->hasPermissionTo('manage_thickness_stiffness'); }
-    public function update(User $user, ThicknessStiffness $model): bool { return $user->hasPermissionTo('manage_thickness_stiffness'); }
-    public function delete(User $user, ThicknessStiffness $model): bool { return $user->hasPermissionTo('manage_thickness_stiffness'); }
-    public function deleteAny(User $user): bool { return $user->hasPermissionTo('manage_thickness_stiffness'); }
-    public function restore(User $user, ThicknessStiffness $model): bool { return $user->hasPermissionTo('manage_thickness_stiffness'); }
-    public function forceDelete(User $user, ThicknessStiffness $model): bool { return $user->hasPermissionTo('manage_thickness_stiffness'); }
+    public function create(User $user): bool
+    {
+        return $user->hasPermissionTo('add_thickness_stiffness');
+    }
+
+    public function update(User $user, ThicknessStiffness $model): bool
+    {
+        return $user->hasPermissionTo('manage_thickness_stiffness');
+    }
+
+    public function delete(User $user, ThicknessStiffness $model): bool
+    {
+        return $user->hasPermissionTo('delete_thickness_stiffness');
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $user->hasPermissionTo('delete_thickness_stiffness');
+    }
+
+    public function restore(User $user, ThicknessStiffness $model): bool
+    {
+        return $user->hasPermissionTo('manage_thickness_stiffness');
+    }
+
+    public function forceDelete(User $user, ThicknessStiffness $model): bool
+    {
+        return $user->hasPermissionTo('delete_thickness_stiffness');
+    }
 }

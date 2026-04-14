@@ -7,7 +7,7 @@ use Filament\Tables\Table;
 
 class ThicknessStiffnessesTable
 {
-    protected const STIFFNESSES = [500, 1250, 2500, 10000];
+    protected const STIFFNESSES = [1250, 2500, 5000, 10000];
 
     public static function configure(Table $table): Table
     {

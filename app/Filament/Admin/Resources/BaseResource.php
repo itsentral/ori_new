@@ -10,12 +10,15 @@ class BaseResource extends Resource
     public static function canViewAny(): bool
     {
         $model = static::getPermissionName();
-        return auth()->user()->can("view_{$model}") || auth()->user()->can("manage_{$model}");
+        return auth()->user()->can("view_{$model}")
+            || auth()->user()->can("add_{$model}")
+            || auth()->user()->can("manage_{$model}")
+            || auth()->user()->can("delete_{$model}");
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('manage_' . static::getPermissionName());
+        return auth()->user()->can('add_' . static::getPermissionName());
     }
 
     public static function canEdit($record): bool
@@ -26,17 +29,20 @@ class BaseResource extends Resource
     public static function canView($record): bool
     {
         $model = static::getPermissionName();
-        return auth()->user()->can("view_{$model}") || auth()->user()->can("manage_{$model}");
+        return auth()->user()->can("view_{$model}")
+            || auth()->user()->can("add_{$model}")
+            || auth()->user()->can("manage_{$model}")
+            || auth()->user()->can("delete_{$model}");
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->user()->can('manage_' . static::getPermissionName());
+        return auth()->user()->can('delete_' . static::getPermissionName());
     }
 
     public static function canDeleteAny(): bool
     {
-        return auth()->user()->can('manage_' . static::getPermissionName());
+        return auth()->user()->can('delete_' . static::getPermissionName());
     }
 
     protected static function getPermissionName(): string
@@ -70,9 +76,9 @@ class BaseResource extends Resource
     {
         return [
             \Filament\Actions\ViewAction::make()
-                ->visible(fn() => static::canView(null)), // Menggunakan helper canView
+                ->visible(fn() => static::canView(null)),
             \Filament\Actions\DeleteAction::make()
-                ->visible(fn() => static::canDelete(null)), // Menggunakan helper canDelete
+                ->visible(fn() => static::canDelete(null)),
         ];
     }
 }
