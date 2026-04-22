@@ -45,7 +45,10 @@ class ListThicknessStiffnesses extends ListRecords
                 return $formData;
             })
             ->schema(function () {
-                $diameters = MasterDiameter::orderBy('diameter_mm')->get();
+                
+                $diameters = MasterDiameter::query()
+                ->orderByRaw('CAST(diameter_mm AS UNSIGNED) ASC')
+                ->get();
                 $stiffnesses = self::STIFFNESSES;
 
                 $schema = [];

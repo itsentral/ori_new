@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('master_standard_engineerings')
                 ->cascadeOnDelete();
             $table->string('engineering_value');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

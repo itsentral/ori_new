@@ -71,7 +71,9 @@ class ListThicknessPressureTemps extends ListRecords
                 return $formData;
             })
             ->schema(function () {
-                $diameters = MasterDiameter::orderBy('diameter_mm')->get();
+                $diameters = MasterDiameter::query()
+                            ->orderByRaw('CAST(diameter_mm AS UNSIGNED) ASC')
+                            ->get();
                 $pns = MasterPressureNominal::query()
                     ->orderByRaw('LENGTH(pn_name) ASC')
                     ->orderBy('pn_name', 'asc')
