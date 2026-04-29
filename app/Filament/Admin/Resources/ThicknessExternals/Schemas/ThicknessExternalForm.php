@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\ThicknessLiners\Schemas;
+namespace App\Filament\Admin\Resources\ThicknessExternals\Schemas;
 
 use App\Models\MasterMaterialType;
-use App\Models\MasterMaterial;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,7 +12,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Schema;
 
-class ThicknessLinerForm
+class ThicknessExternalForm
 {
     protected static function updateFormula(Get $get, Set $set, string $path = 'layers_formula'): void
     {
@@ -34,9 +33,8 @@ class ThicknessLinerForm
     {
         return $schema
             ->components([
-                // Hanya tampil saat edit, auto-generated saat create
-                TextInput::make('liner_code')
-                    ->label('Liner Code')
+                TextInput::make('external_code')
+                    ->label('External Code')
                     ->readonly()
                     ->placeholder('Auto generated saat simpan')
                     ->columnSpanFull()
@@ -46,18 +44,6 @@ class ThicknessLinerForm
                 Grid::make(3)
                     ->columnSpanFull()
                     ->schema([
-                        Select::make('corrosion')
-                            ->label('Corrosion Resistance')
-                            ->options([1 => 'Low', 2 => 'Medium', 3 => 'High'])
-                            ->required()
-                            ->native(false),
-
-                        Select::make('temprature')
-                            ->label('Temperature Resistance')
-                            ->options([1 => 'Low', 2 => 'Medium', 3 => 'High'])
-                            ->required()
-                            ->native(false),
-
                         Select::make('material_type_id')
                             ->label('Resin Type')
                             ->options(MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
@@ -124,10 +110,13 @@ class ThicknessLinerForm
                                     $material = MasterMaterialType::find($state);
                                     if ($material) {
                                         $set('material_code', $material->type_code);
-                                        $c006Value = $material->engineeringDetails()
-                                            ->whereHas('engineering', fn($q) => $q->where('engineering_code', 'C006'))
+
+                                        // Ambil C008 untuk External (bukan C006)
+                                        $c008Value = $material->engineeringDetails()
+                                            ->whereHas('engineering', fn($q) => $q->where('engineering_code', 'C008'))
                                             ->first()?->engineering_value ?? 0;
-                                        $set('engineering_value', $c006Value);
+
+                                        $set('engineering_value', $c008Value);
                                     }
                                 }
 

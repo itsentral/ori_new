@@ -19,10 +19,6 @@ class ThicknessCalculationsTable
     {
         return $table
             ->columns([
-                // TextColumn::make('calculation_code')
-                //     ->label('Kode')
-                //     ->searchable()
-                //     ->sortable(),
                 TextColumn::make('brand_name')
                     ->label('Brand Name')
                     ->searchable()
@@ -44,7 +40,7 @@ class ThicknessCalculationsTable
                 TextColumn::make('stiffness_snapshot')
                     ->label('SN')
                     ->formatStateUsing(fn($state) => 'SN' . $state),
-                TextColumn::make('external_layer_snapshot')
+                TextColumn::make('external_thickness_snapshot')
                     ->label('External')
                     ->default('-'),
                 TextColumn::make('use_top_coat')
@@ -79,8 +75,9 @@ class ThicknessCalculationsTable
                     ->label('Proses Thickness')
                     ->icon('heroicon-o-cog')
                     ->color('warning')
-                    ->visible(fn($record) => $record->layer_selection_status === 'pending')
+                    // ->visible(fn($record) => $record->layer_selection_status === 'pending')
                     ->url(fn($record) => ThicknessCalculationResource::getUrl('process-thickness', ['record' => $record]))
+                    
             ]);
     }
 }

@@ -31,7 +31,6 @@ class EditThicknessCalculation extends EditRecord
             ->pluck('id')
             ->toArray();
 
-        // Re-fill snapshot dari relasi jika kosong
         if (empty($data['pn_name_snapshot']) || empty($data['pn_value_snapshot'])) {
             $pn = \App\Models\MasterPressureNominal::find($data['pressure_nominal_id'] ?? null);
             $data['pn_name_snapshot']  = $pn?->pn_name;
@@ -45,6 +44,12 @@ class EditThicknessCalculation extends EditRecord
             $data['liner_thickness_snapshot']      = $liner?->thickness_teori;
         }
 
+        if (($data['use_external'] ?? false) && empty($data['external_code_snapshot'])) {
+            $ext = \App\Models\ThicknessExternal::find($data['external_id'] ?? null);
+            $data['external_code_snapshot']      = $ext?->external_code;
+            $data['external_thickness_snapshot'] = $ext?->thickness_teori;
+        }
+
         return $data;
     }
 
@@ -55,7 +60,7 @@ class EditThicknessCalculation extends EditRecord
             $data['liner_code_snapshot']      ?? null,
             'STRUCT',
             ($data['use_external'] ?? false)
-                ? ($data['external_layer_snapshot'] ?? null)
+                ? ($data['external_code_snapshot'] ?? null)
                 : null,
             ($data['use_top_coat'] ?? false) ? 'TC' : null,
         ]);
@@ -98,9 +103,8 @@ class EditThicknessCalculation extends EditRecord
             'vacuum_type'         => $record->vacuum_type,
             'vacuum_load'         => $record->vacuum_load_snapshot,
             'stiffness'           => $record->stiffness_snapshot,
-            'external_layer'      => $record->use_external
-                ? $record->external_layer_snapshot
-                : null,
+            'use_external'        => $record->use_external,
+            'external_thickness'  => $record->external_thickness_snapshot,
             'use_top_coat'        => $record->use_top_coat,
         ]);
 
@@ -109,5 +113,10 @@ class EditThicknessCalculation extends EditRecord
         }
 
         $record->details()->createMany($details);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }
