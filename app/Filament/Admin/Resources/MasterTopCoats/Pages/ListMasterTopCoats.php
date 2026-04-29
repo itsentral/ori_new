@@ -43,7 +43,9 @@ class ListMasterTopCoats extends ListRecords
                 return $formData;
             })
             ->schema(function (): array {
-                $diameters = MasterDiameter::orderBy('diameter_mm')->get();
+                $diameters = MasterDiameter::query()
+                ->orderByRaw('CAST(diameter_mm AS UNSIGNED)  ASC')
+                ->get();
 
                 $schema = [];
                 foreach ($diameters as $dia) {
