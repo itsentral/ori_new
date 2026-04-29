@@ -12,7 +12,7 @@ use Illuminate\Validation\Rules\Unique;
 
 class MasterUnitForm
 {
-    public static function configure(Schema $schema, int $category = 1): Schema
+    public static function configure(Schema $schema, int $category = 1, ?int $recordId = null): Schema
     {
         return $schema
             ->components([
@@ -25,7 +25,7 @@ class MasterUnitForm
                     ->rules([
                         fn(Get $get): Unique => Rule::unique('master_pieces', 'pieces_code')
                             ->where('category_pieces', $get('category_pieces'))
-                            ->ignore($get('../../id')),
+                            ->ignore($recordId),
                     ]),
 
                 TextInput::make('pieces_name')
