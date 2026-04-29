@@ -63,4 +63,9 @@ class CreateThicknessCalculation extends CreateRecord
                 ->update(['calculation_id' => $record->id]);
         }
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

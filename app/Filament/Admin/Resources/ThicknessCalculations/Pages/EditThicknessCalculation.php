@@ -114,4 +114,9 @@ class EditThicknessCalculation extends EditRecord
 
         $record->details()->createMany($details);
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
