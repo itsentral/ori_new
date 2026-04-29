@@ -11,7 +11,7 @@ class MasterMaterialsTable
     public static function configure(Table $table): Table
     {
         return $table
-        ->deferLoading()
+            ->deferLoading()
             ->columns([
                 TextColumn::make('no')
                     ->label('No')
@@ -23,31 +23,11 @@ class MasterMaterialsTable
                 TextColumn::make('trade_name')
                     ->searchable(),
                 TextColumn::make('international_name')
-                    ->searchable(),
-                TextColumn::make('id_material_type')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('id_measurement')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('unit_measurement')
-                    ->searchable(),
-                TextColumn::make('conversion_value')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('id_packing')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('unit_packing')
-                    ->searchable(),
-                TextColumn::make('min_stock_day')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('max_stock_day')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('monthly_requirement')
-                    ->numeric()
+                    ->searchable()
+                    ->default('-'),
+                TextColumn::make('materialType.type_name')
+                    ->label('Material Type')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -62,18 +42,8 @@ class MasterMaterialsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                // TrashedFilter::make(),
-            ])
             ->recordActions([
                 ...MasterMaterialResource::getRecordActions(),
-            ])
-            ->toolbarActions([
-                // BulkActionGroup::make([
-                //     DeleteBulkAction::make(),
-                //     ForceDeleteBulkAction::make(),
-                //     RestoreBulkAction::make(),
-                // ]),
             ]);
     }
 }

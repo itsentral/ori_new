@@ -29,7 +29,9 @@ class MasterUnitResource extends BaseResource
 
     public static function form(Schema $schema): Schema
     {
-        return MasterUnitForm::configure($schema, 1);
+        $recordId = $schema->getRecord()?->id ?? null;
+
+        return MasterUnitForm::configure($schema, category: 1, recordId: $recordId);
     }
 
     public static function table(Table $table): Table

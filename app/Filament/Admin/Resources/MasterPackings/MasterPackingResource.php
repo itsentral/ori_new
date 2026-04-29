@@ -33,7 +33,9 @@ class MasterPackingResource extends BaseResource
 
     public static function form(Schema $schema): Schema
     {
-        return MasterPackingForm::configure($schema);
+        $recordId = $schema->getRecord()?->id ?? null;
+
+        return MasterPackingForm::configure($schema, category: 2, recordId: $recordId);
     }
 
     public static function infolist(Schema $schema): Schema

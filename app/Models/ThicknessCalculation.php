@@ -25,7 +25,9 @@ class ThicknessCalculation extends Model
         'vacuum_type',
         'vacuum_load_snapshot',
         'stiffness_snapshot',
-        'external_layer_snapshot',
+        'external_id',
+        'external_code_snapshot',
+        'external_thickness_snapshot',
         'use_external',
         'use_top_coat',
         'status',
@@ -40,6 +42,7 @@ class ThicknessCalculation extends Model
         'liner_thickness_snapshot' => 'decimal:2',
         'pn_value_snapshot'        => 'decimal:2',
         'vacuum_load_snapshot'     => 'decimal:2',
+        'external_thickness_snapshot' => 'decimal:2',
     ];
 
     protected static function booted(): void
@@ -101,5 +104,10 @@ class ThicknessCalculation extends Model
     public function layerSelections()
     {
         return $this->hasMany(ThicknessCalculationLayerSelection::class, 'calculation_id');
+    }
+
+    public function external(): BelongsTo
+    {
+        return $this->belongsTo(MasterThicknessExternal::class, 'external_id');
     }
 }

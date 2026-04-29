@@ -4,12 +4,14 @@ namespace App\Filament\Admin\Resources\ThicknessCalculations\Schemas;
 
 use App\Models\MasterApplication;
 use App\Models\MasterPressureNominal;
+use App\Models\ThicknessExternal;
 use App\Models\ThicknessLiner;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\Hidden;
 
 class ThicknessCalculationForm
@@ -89,10 +91,10 @@ class ThicknessCalculationForm
                         ->required()
                         ->options(
                             MasterPressureNominal::orderByRaw("CAST(SUBSTRING(pn_name, 3) AS UNSIGNED) ASC")
-                            ->get()
-                            ->mapWithKeys(
-                                fn($pn) => [$pn->id => $pn->pn_name]
-                            )
+                                ->get()
+                                ->mapWithKeys(
+                                    fn($pn) => [$pn->id => $pn->pn_name]
+                                )
                         )
                         ->reactive()
                         ->afterStateUpdated(function ($state, $set) {
@@ -138,6 +140,8 @@ class ThicknessCalculationForm
                     Hidden::make('pn_value_snapshot'),
                 ]),
 
+            // ThicknessCalculationForm.php — Section External & Top Coat
+
             Section::make('External & Top Coat')
                 ->columns(2)
                 ->schema([
@@ -148,16 +152,31 @@ class ThicknessCalculationForm
                     Toggle::make('use_top_coat')
                         ->label('Pakai Top Coat?'),
 
-                    Select::make('external_layer_snapshot')
-                        ->label('Layer External')
+                    Select::make('external_id')
+                        ->label('Pilih External')
                         ->visible(fn($get) => $get('use_external'))
-                        ->options([
-                            '1V'   => '1V',
-                            '2V'   => '2V',
-                            '1M'   => '1M',
-                            '1M1V' => '1M1V',
-                        ])
+                        ->options(
+                            ThicknessExternal::all()->mapWithKeys(fn($e) => [
+                                $e->id => "{$e->external_code} — {$e->material_type_name} ({$e->layers_formula}) {$e->thickness_teori} mm"
+                            ])
+                        )
+                        ->searchable()
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function ($state, Set $set) {
+                            if ($state) {
+                                $ext = ThicknessExternal::find($state);
+                                $set('external_code_snapshot', $ext?->external_code);
+                                $set('external_thickness_snapshot', $ext?->thickness_teori);
+                            } else {
+                                $set('external_code_snapshot', null);
+                                $set('external_thickness_snapshot', null);
+                            }
+                        })
                         ->columnSpan(2),
+
+                    Hidden::make('external_code_snapshot'),
+                    Hidden::make('external_thickness_snapshot'),
                 ]),
 
             Section::make('Layer & Application')

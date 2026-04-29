@@ -36,10 +36,8 @@ class ThicknessCalculationService
                 ->value('thickness') ?? 0;
 
             $thicknessEXT = 0;
-            if (!empty($params['external_layer'])) {
-                $thicknessEXT = MasterThicknessExternal::where('diameter_id', $diameter->id)
-                    ->where('layer', $params['external_layer'])
-                    ->value('thickness') ?? 0;
+            if (!empty($params['use_external']) && !empty($params['external_thickness'])) {
+                $thicknessEXT = (float) $params['external_thickness'];
             }
 
             $thicknessTC = 0;
