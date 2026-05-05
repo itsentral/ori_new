@@ -39,9 +39,8 @@ class ProcessThickness extends Page
     public function mount(ThicknessCalculation $record): void
     {
         $this->record = $record;
-        $this->isViewMode = false; // selalu bisa edit
+        $this->isViewMode = false; 
 
-        // Tetap load selections yang sudah ada jika ada
         foreach ($record->details as $detail) {
             $this->selections[$detail->id] = $detail->selected_thickness_id
                 ? (string) $detail->selected_thickness_id
@@ -51,7 +50,6 @@ class ProcessThickness extends Page
 
     public function booted(): void
     {
-        // Pastikan record selalu fresh
         $this->record->refresh();
     }
 
@@ -98,19 +96,18 @@ class ProcessThickness extends Page
                 ->label('Hitung Ulang')
                 ->icon('heroicon-m-arrow-path')
                 ->color('warning')
-                ->hidden(fn() => $this->isRecalculating) // hapus || $this->isViewMode
+                ->hidden(fn() => $this->isRecalculating) 
                 ->action('recalculate'),
 
             Action::make('save')
                 ->label('Simpan Pilihan')
                 ->icon('heroicon-m-check')
                 ->color('success')
-                ->hidden(fn() => $this->isRecalculating) // hapus || $this->isViewMode
+                ->hidden(fn() => $this->isRecalculating)
                 ->action('saveSelections'),
         ];
     }
 
-    // Dipanggil dari JS saat halaman sudah mount (via wire:init)
     public function recalculate(): void
     {
         $this->isRecalculating = true;
@@ -135,7 +132,6 @@ class ProcessThickness extends Page
             $details = $service->matchLayerForDetails($details, $record->layer_category);
         }
 
-        // Update atau create per diameter — jangan delete semua
         foreach ($details as $detailData) {
             $record->details()->updateOrCreate(
                 ['diameter_id' => $detailData['diameter_id']],
@@ -145,7 +141,6 @@ class ProcessThickness extends Page
 
         $record->refresh();
 
-        // Load selections dari DB
         $this->selections = [];
         foreach ($record->details as $detail) {
             $this->selections[$detail->id] = $detail->selected_thickness_id
@@ -255,7 +250,6 @@ class ProcessThickness extends Page
             );
         }
 
-        // Hapus baris ini — jangan update status
         // $this->record->update(['layer_selection_status' => 'selected']);
 
         Notification::make()
