@@ -63,4 +63,9 @@ class ThicknessExternalResource extends BaseResource
     {
         return 'Thickness External';
     }
+
+    protected static function getPermissionName(): string
+    {
+        return 'master_thickness_external';
+    }
 }
