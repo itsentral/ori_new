@@ -21,13 +21,13 @@ class MasterTopCoatsTable
                 TextColumn::make('no')
                     ->rowIndex()
                     ->width('50px'),
-                TextColumn::make('diameter_inch')
-                    ->label('Diameter (inch)')
-                    ->sortable(),
                 TextColumn::make('diameter_mm')
                     ->label('Diameter (mm)')
                     ->sortable()
                     ->weight('bold'),
+                TextColumn::make('diameter_inch')
+                    ->label('Diameter (inch)')
+                    ->sortable(),
                 TextColumn::make('topCoat.thickness')
                     ->label('Thickness (mm)')
                     ->numeric(2)

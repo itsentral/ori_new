@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\MasterLayers\Tables;
 
 use App\Filament\Admin\Resources\MasterLayers\MasterLayerResource;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class MasterLayersTable
@@ -14,6 +13,9 @@ class MasterLayersTable
         return $table
             ->deferLoading()
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('layer_code')
                     ->label('Layer Code')
                     ->sortable()
@@ -58,9 +60,6 @@ class MasterLayersTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                TrashedFilter::make(),
             ])
             ->recordActions([
                 ...MasterLayerResource::getRecordActions(),

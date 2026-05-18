@@ -122,7 +122,13 @@ class ThicknessCalculationForm
                             'intermitten' => 'Intermitten',
                             'continues'   => 'Continues',
                         ])
-                        ->reactive(),
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, $set) {
+                            // Reset vacuum_load saat vacuum_type berubah
+                            if (!$state) {
+                                $set('vacuum_load_snapshot', null);
+                            }
+                        }),
 
                     Select::make('vacuum_load_snapshot')
                         ->label('Parameter Vacuum')
@@ -132,8 +138,12 @@ class ThicknessCalculationForm
                             return \App\Models\ThicknessVacuum::select('vacuum_load')
                                 ->distinct()
                                 ->orderBy('vacuum_load')
-                                ->pluck('vacuum_load', 'vacuum_load');
+                                ->get()
+                                ->mapWithKeys(fn($row) => [
+                                    number_format((float) $row->vacuum_load, 2) => number_format((float) $row->vacuum_load, 2)
+                                ]);
                         })
+                        ->reactive()
                         ->columnSpan(2),
 
                     Hidden::make('pn_name_snapshot'),

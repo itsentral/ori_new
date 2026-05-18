@@ -3,14 +3,8 @@
 namespace App\Filament\Admin\Resources\ThicknessCalculations\Tables;
 
 use App\Filament\Admin\Resources\ThicknessCalculations\ThicknessCalculationResource;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Radio;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class ThicknessCalculationsTable
@@ -19,6 +13,9 @@ class ThicknessCalculationsTable
     {
         return $table
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('brand_name')
                     ->label('Brand Name')
                     ->searchable()
@@ -57,9 +54,6 @@ class ThicknessCalculationsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                TrashedFilter::make(),
             ])
             ->recordActions([
                 ...ThicknessCalculationResource::getRecordActions(),

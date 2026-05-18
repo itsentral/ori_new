@@ -29,21 +29,23 @@ class ThicknessCalculationDetail extends Model
         'thickness_upper_value',
         'selected_thickness_id',
         'selected_thickness_value',
+        'thickness_structure_adjustment',
     ];
 
     protected $casts = [
-        'thickness_liner'          => 'decimal:2',
-        'thickness_pressure_temp'  => 'decimal:2',
-        'thickness_vacuum'         => 'decimal:2',
-        'thickness_stiffness'      => 'decimal:2',
-        'thickness_external'       => 'decimal:2',
-        'thickness_top_coat'       => 'decimal:2',
-        'thickness_structure_raw'  => 'decimal:2',
-        'thickness_structure_used' => 'decimal:2',
-        'total_thickness'          => 'decimal:2',
-        'thickness_lower_value'    => 'decimal:2',
-        'thickness_upper_value'    => 'decimal:2',
-        'selected_thickness_value' => 'decimal:2',
+        'thickness_liner'                => 'decimal:2',
+        'thickness_pressure_temp'        => 'decimal:2',
+        'thickness_vacuum'               => 'decimal:2',
+        'thickness_stiffness'            => 'decimal:2',
+        'thickness_external'             => 'decimal:2',
+        'thickness_top_coat'             => 'decimal:2',
+        'thickness_structure_raw'        => 'decimal:2',
+        'thickness_structure_used'       => 'decimal:2',
+        'total_thickness'                => 'decimal:2',
+        'thickness_lower_value'          => 'decimal:2',
+        'thickness_upper_value'          => 'decimal:2',
+        'selected_thickness_value'       => 'decimal:2',
+        'thickness_structure_adjustment' => 'decimal:4',
     ];
 
     public function calculation()
@@ -57,22 +59,22 @@ class ThicknessCalculationDetail extends Model
     }
 
     public function matchedLayer()
-{
-    return $this->belongsTo(MasterLayer::class, 'matched_layer_id');
-}
+    {
+        return $this->belongsTo(MasterLayer::class, 'matched_layer_id');
+    }
 
-public function thicknessLower()
-{
-    return $this->belongsTo(MasterLayerThickness::class, 'thickness_lower_id');
-}
+    public function thicknessLower()
+    {
+        return $this->belongsTo(MasterLayerThickness::class, 'thickness_lower_id');
+    }
 
-public function thicknessUpper()
-{
-    return $this->belongsTo(MasterLayerThickness::class, 'thickness_upper_id');
-}
+    public function thicknessUpper()
+    {
+        return $this->belongsTo(MasterLayerThickness::class, 'thickness_upper_id');
+    }
 
-public function selectedThickness()
-{
-    return $this->belongsTo(MasterLayerThickness::class, 'selected_thickness_id');
-}
+    public function selectedThickness()
+    {
+        return $this->belongsTo(MasterLayerThickness::class, 'selected_thickness_id');
+    }
 }
