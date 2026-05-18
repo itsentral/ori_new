@@ -51,33 +51,37 @@ class ThicknessCalculationService
             if ($thicknessLiner == 0 && !empty($params['liner_id'])) {
                 $thicknessLiner = (float) \App\Models\ThicknessLiner::find($params['liner_id'])?->thickness_teori ?? 0;
             }
+
             $structureRaw    = max($thicknessPN, $thicknessVC, $thicknessSN);
-            $totalBeforeRule = $thicknessLiner + $structureRaw + $thicknessEXT;
+            $totalBeforeRule = $thicknessLiner + $structureRaw + $thicknessEXT + $thicknessTC; // ← tambah TC
 
-            if ($totalBeforeRule < self::MIN_TOTAL) {
-                $structureUsed = self::MIN_TOTAL - $thicknessLiner - $thicknessEXT;
-                $rule          = 'adjusted';
-            } else {
-                $structureUsed = $structureRaw;
-                $rule          = 'as_is';
-            }
+if ($totalBeforeRule < self::MIN_TOTAL) {
+    $structureUsed       = self::MIN_TOTAL - $thicknessLiner - $thicknessEXT - $thicknessTC; // ← kurangi TC
+    $structureAdjustment = $structureUsed - $structureRaw;
+    $rule                = 'adjusted';
+} else {
+    $structureUsed       = $structureRaw;
+    $structureAdjustment = 0;
+    $rule                = 'as_is';
+}
 
-            $totalThickness = $thicknessLiner + $structureUsed + $thicknessEXT + $thicknessTC;
+$totalThickness = $thicknessLiner + $structureUsed + $thicknessEXT + $thicknessTC;
 
             $details[] = [
-                'diameter_id'              => $diameter->id,
-                'diameter_inch_snapshot'   => $diameter->diameter_inch,
-                'diameter_mm_snapshot'     => $diameter->diameter_mm,
-                'thickness_liner'          => $thicknessLiner,
-                'thickness_pressure_temp'  => $thicknessPN,
-                'thickness_vacuum'         => $thicknessVC,
-                'thickness_stiffness'      => $thicknessSN,
-                'thickness_external'       => $thicknessEXT,
-                'thickness_top_coat'       => $thicknessTC,
-                'thickness_structure_raw'  => $structureRaw,
-                'thickness_structure_used' => $structureUsed,
-                'total_thickness'          => $totalThickness,
-                'structure_rule'           => $rule,
+                'diameter_id'                    => $diameter->id,
+                'diameter_inch_snapshot'         => $diameter->diameter_inch,
+                'diameter_mm_snapshot'           => $diameter->diameter_mm,
+                'thickness_liner'                => $thicknessLiner,
+                'thickness_pressure_temp'        => $thicknessPN,
+                'thickness_vacuum'               => $thicknessVC,
+                'thickness_stiffness'            => $thicknessSN,
+                'thickness_external'             => $thicknessEXT,
+                'thickness_top_coat'             => $thicknessTC,
+                'thickness_structure_raw'        => $structureRaw,
+                'thickness_structure_used'       => $structureUsed,
+                'thickness_structure_adjustment' => $structureAdjustment, // ← field baru
+                'total_thickness'                => $totalThickness,
+                'structure_rule'                 => $rule,
             ];
         }
 
@@ -89,19 +93,18 @@ class ThicknessCalculationService
         foreach ($details as &$detail) {
             $diameterMm = (float) $detail['diameter_mm_snapshot'];
 
-            // Cari layer yang cocok berdasarkan kategori dan range diameter
             $layer = MasterLayer::where('category', $category)
                 ->where(function ($q) use ($diameterMm) {
                     $q->where(function ($q2) use ($diameterMm) {
                         $q2->where('operator', '<')
-                            ->whereHas('diameter1', fn($d) => $d->where('diameter_mm', '>', $diameterMm));
+                            ->whereHas('diameter1', fn($d) => $d->whereRaw('CAST(diameter_mm AS DECIMAL(10,2)) >= ?', [$diameterMm]));
                     })->orWhere(function ($q2) use ($diameterMm) {
                         $q2->where('operator', '>')
-                            ->whereHas('diameter1', fn($d) => $d->where('diameter_mm', '<', $diameterMm));
+                            ->whereHas('diameter1', fn($d) => $d->whereRaw('CAST(diameter_mm AS DECIMAL(10,2)) <= ?', [$diameterMm]));
                     })->orWhere(function ($q2) use ($diameterMm) {
                         $q2->where('operator', 'between')
-                            ->whereHas('diameter1', fn($d) => $d->where('diameter_mm', '<=', $diameterMm))
-                            ->whereHas('diameter2', fn($d) => $d->where('diameter_mm', '>=', $diameterMm));
+                            ->whereHas('diameter1', fn($d) => $d->whereRaw('CAST(diameter_mm AS DECIMAL(10,2)) <= ?', [$diameterMm]))
+                            ->whereHas('diameter2', fn($d) => $d->whereRaw('CAST(diameter_mm AS DECIMAL(10,2)) >= ?', [$diameterMm]));
                     });
                 })
                 ->first();
@@ -119,7 +122,8 @@ class ThicknessCalculationService
             $detail['matched_layer_id']            = $layer->id;
             $detail['matched_layer_code_snapshot'] = $layer->layer_code;
 
-            $target = (float) $detail['total_thickness'];
+            // ← Ganti dari total_thickness ke thickness_structure_used (post-adjustment)
+            $target = (float) $detail['thickness_structure_used'];
 
             $lower = MasterLayerThickness::where('master_layer_id', $layer->id)
                 ->where('thickness', '<=', $target)
@@ -131,14 +135,14 @@ class ThicknessCalculationService
                 ->orderBy('thickness')
                 ->first();
 
-            // Fallback jika tidak ada lower
+            // Fallback jika tidak ada lower (target lebih kecil dari semua thickness)
             if (!$lower) {
                 $lower = MasterLayerThickness::where('master_layer_id', $layer->id)
                     ->orderBy('thickness')
                     ->first();
             }
 
-            // Fallback jika tidak ada upper
+            // Fallback jika tidak ada upper (target lebih besar dari semua thickness)
             if (!$upper) {
                 $upper = MasterLayerThickness::where('master_layer_id', $layer->id)
                     ->orderByDesc('thickness')

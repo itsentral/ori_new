@@ -44,6 +44,10 @@ class EditThicknessCalculation extends EditRecord
             $data['liner_thickness_snapshot']      = $liner?->thickness_teori;
         }
 
+        if (empty($data['vacuum_load_snapshot'])) {
+            $data['vacuum_load_snapshot'] = $this->record->vacuum_load_snapshot;
+        }
+
         if (($data['use_external'] ?? false) && empty($data['external_code_snapshot'])) {
             $ext = \App\Models\ThicknessExternal::find($data['external_id'] ?? null);
             $data['external_code_snapshot']      = $ext?->external_code;
@@ -66,6 +70,10 @@ class EditThicknessCalculation extends EditRecord
         ]);
 
         $data['standard_product_name'] = implode('+', $parts);
+
+        if (!empty($data['vacuum_load_snapshot'])) {
+            $data['vacuum_load_snapshot'] = number_format((float) $data['vacuum_load_snapshot'], 2);
+        }
 
         // Reset layer selection status jika parameter berubah
         $data['layer_selection_status'] = 'pending';

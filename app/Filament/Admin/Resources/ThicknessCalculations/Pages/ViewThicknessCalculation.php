@@ -37,6 +37,10 @@ class ViewThicknessCalculation extends ViewRecord
             $data['liner_thickness_snapshot']     = $liner?->thickness_teori;
         }
 
+        if (empty($data['vacuum_load_snapshot'])) {
+        $data['vacuum_load_snapshot'] = $this->record->vacuum_load_snapshot;
+    }
+    
         return $data;
     }
 }

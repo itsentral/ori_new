@@ -2,9 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ThicknessPressureTemps\Tables;
 
-use App\Filament\Admin\Resources\ThicknessPressureTemps\ThicknessPressureTempResource;
 use App\Models\MasterPressureNominal;
-use App\Models\ThicknessPressureTemp;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -39,13 +37,13 @@ class ThicknessPressureTempsTable
                 TextColumn::make('no')
                     ->rowIndex()
                     ->width('50px'),
-                TextColumn::make('diameter_inch')
-                    ->label('Diameter (inch)')
-                    ->sortable(),
                 TextColumn::make('diameter_mm')
                     ->label('Diameter (mm)')
                     ->sortable()
                     ->weight('bold'),
+                TextColumn::make('diameter_inch')
+                    ->label('Diameter (inch)')
+                    ->sortable(),
                 ...$pnColumns,
             ])
             ->filters([])

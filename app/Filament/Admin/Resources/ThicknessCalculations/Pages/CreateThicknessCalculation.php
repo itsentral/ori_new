@@ -23,6 +23,10 @@ class CreateThicknessCalculation extends CreateRecord
             ($data['use_top_coat'] ?? false) ? 'TC' : null,
         ]);
 
+        if (!empty($data['vacuum_load_snapshot'])) {
+            $data['vacuum_load_snapshot'] = number_format((float) $data['vacuum_load_snapshot'], 2);
+        }
+
         $data['standard_product_name'] = implode('+', $parts);
 
         return $data;

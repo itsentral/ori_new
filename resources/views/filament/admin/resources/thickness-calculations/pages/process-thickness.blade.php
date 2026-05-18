@@ -266,6 +266,75 @@
     .dark .pt-spinner-text { color: #9ca3af; }
     .pt-spinner-sub { font-size: 12px; color: #9ca3af; }
     .dark .pt-spinner-sub { color: #6b7280; }
+
+    .pt-adj-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: #f97316;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 4px;
+    vertical-align: middle;
+    user-select: none;
+}
+.dark .pt-adj-trigger { background: #ea580c; }
+
+.pt-adj-popover {
+    position: fixed;
+    z-index: 99999;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    min-width: 200px;
+    font-size: 12px;
+}
+.dark .pt-adj-popover { background: #1f2937; border-color: #374151; }
+
+.pt-adj-popover-title {
+    font-weight: 700;
+    font-size: 12px;
+    color: #f97316;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.dark .pt-adj-popover-title { color: #fb923c; }
+
+.pt-adj-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 4px;
+    color: #374151;
+}
+.dark .pt-adj-row { color: #d1d5db; }
+
+.pt-adj-row:last-child { margin-bottom: 0; }
+
+.pt-adj-label { color: #6b7280; }
+.dark .pt-adj-label { color: #9ca3af; }
+
+.pt-adj-value { font-weight: 600; color: #111827; }
+.dark .pt-adj-value { color: #f3f4f6; }
+
+.pt-adj-value-orange { font-weight: 600; color: #f97316; }
+.dark .pt-adj-value-orange { color: #fb923c; }
+
+.pt-adj-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 6px 0;
+}
+.dark .pt-adj-divider { border-color: #374151; }
 </style>
 
 
@@ -317,11 +386,23 @@
                         @foreach ($this->record->details()->orderBy('diameter_mm_snapshot')->get() as $index => $detail)
                             <tr class="{{ $index % 2 === 0 ? 'pt-tr-even' : 'pt-tr-odd' }}">
                                 <td class="pt-td pt-td-left">
-                                    <span class="pt-diameter">DN{{ $detail->diameter_inch_snapshot }}</span>
-                                    <span class="pt-diameter-sub">({{ $detail->diameter_mm_snapshot }} mm)</span>
+                                    <span class="pt-diameter">DN{{ $detail->diameter_mm_snapshot }}</span>
+                                    <span class="pt-diameter-sub">({{ $detail->diameter_inch_snapshot }})</span>
                                 </td>
                                 <td class="pt-td">{{ $detail->thickness_liner }}</td>
-                                <td class="pt-td">{{ $detail->thickness_structure_used }}</td>
+                               <td class="pt-td" style="position: relative;">
+                                    {{ $detail->thickness_structure_used }}
+                                    
+                                    @if ($detail->thickness_structure_adjustment > 0)
+                                        <span 
+                                            class="pt-adj-trigger"
+                                            onclick="toggleAdjPopover(this)"
+                                            data-raw="{{ number_format($detail->thickness_structure_raw, 2) }}"
+                                            data-adj="{{ number_format($detail->thickness_structure_adjustment, 2) }}"
+                                            data-used="{{ number_format($detail->thickness_structure_used, 2) }}"
+                                        >!</span>
+                                    @endif
+                                </td>
                                 <td class="pt-td">{{ $detail->thickness_external }}</td>
                                 <td class="pt-td">{{ $detail->thickness_top_coat }}</td>
                                 <td class="pt-td"><span class="pt-total">{{ $detail->total_thickness }}</span></td>
@@ -413,7 +494,7 @@
                         <div>
                             <h3 class="modal-title">Layer: {{ $modalLayer?->layer_code ?? '-' }}</h3>
                             <p class="modal-subtitle">
-                                DN{{ $modalDetail?->diameter_inch_snapshot }} ({{ $modalDetail?->diameter_mm_snapshot }} mm)
+                                DN{{ $modalDetail?->diameter_mm_snapshot }} ({{ $modalDetail?->diameter_inch_snapshot }})
                                 — Total: <strong style="color: #f97316;">{{ $modalDetail?->total_thickness }} mm</strong>
                                 — Parameter: {{ $param }}
                             </p>
@@ -515,4 +596,112 @@
 
     </div>
 
+
+   <script>
+let activePopover = null;
+let activeTrigger = null;
+
+function positionPopover(trigger, popover) {
+    const rect = trigger.getBoundingClientRect();
+    const popW = popover.offsetWidth || 220;
+    const popH = popover.offsetHeight || 120;
+
+    let left = rect.right + 8;
+    let top  = rect.top + (rect.height / 2) - (popH / 2);
+
+    // Jika terlalu ke kanan, tampilkan ke kiri
+    if (left + popW > window.innerWidth - 16) {
+        left = rect.left - popW - 8;
+    }
+
+    // Jika terlalu ke bawah
+    if (top + popH > window.innerHeight - 16) {
+        top = window.innerHeight - popH - 16;
+    }
+
+    // Jika terlalu ke atas
+    if (top < 8) top = 8;
+
+    popover.style.left = left + 'px';
+    popover.style.top  = top + 'px';
+}
+
+function toggleAdjPopover(trigger) {
+    // Kalau klik trigger yang sama, tutup
+    if (activePopover && activeTrigger === trigger) {
+        closePopover();
+        return;
+    }
+
+    // Tutup yang lama dulu
+    closePopover();
+
+    const raw  = trigger.dataset.raw;
+    const adj  = trigger.dataset.adj;
+    const used = trigger.dataset.used;
+
+    const popover = document.createElement('div');
+    popover.className = 'pt-adj-popover';
+    popover.innerHTML = `
+        <p class="pt-adj-popover-title">⚠ Structure Adjusted</p>
+        <div class="pt-adj-row">
+            <span class="pt-adj-label">Raw (hasil hitung)</span>
+            <span class="pt-adj-value">${raw} mm</span>
+        </div>
+        <hr class="pt-adj-divider">
+        <div class="pt-adj-row">
+            <span class="pt-adj-label">Penambahan</span>
+            <span class="pt-adj-value-orange">+${adj} mm</span>
+        </div>
+        <hr class="pt-adj-divider">
+        <div class="pt-adj-row">
+            <span class="pt-adj-label">Final (dipakai)</span>
+            <span class="pt-adj-value">${used} mm</span>
+        </div>
+    `;
+
+    // Render dulu biar bisa ukur tingginya
+    popover.style.visibility = 'hidden';
+    popover.style.position   = 'fixed';
+    document.body.appendChild(popover);
+
+    // Posisikan setelah render
+    requestAnimationFrame(() => {
+        positionPopover(trigger, popover);
+        popover.style.visibility = 'visible';
+    });
+
+    activePopover  = popover;
+    activeTrigger  = trigger;
+}
+
+function closePopover() {
+    if (activePopover) {
+        activePopover.remove();
+        activePopover = null;
+        activeTrigger = null;
+    }
+}
+
+// Tutup saat klik di luar
+document.addEventListener('click', function(e) {
+    if (
+        activePopover &&
+        !activePopover.contains(e.target) &&
+        !e.target.classList.contains('pt-adj-trigger')
+    ) {
+        closePopover();
+    }
+});
+
+// Reposisi saat scroll (pakai capture agar tangkap scroll di dalam elemen)
+document.addEventListener('scroll', function() {
+    if (activePopover && activeTrigger) {
+        positionPopover(activeTrigger, activePopover);
+    }
+}, true);
+
+// Tutup saat Livewire navigasi/update
+document.addEventListener('livewire:navigating', closePopover);
+</script>
 </x-filament-panels::page>
