@@ -19,6 +19,7 @@ class ThicknessLinersTable
                 TextColumn::make('liner_code')
                     ->label('Liner Code')
                     ->copyable()
+                    ->sortable()
                     ->searchable(),
 
                 TextColumn::make('aplikasi')
@@ -39,7 +40,7 @@ class ThicknessLinersTable
                         return "{$cor}, {$temp}";
                     })
                     ->description(fn($record) => $record->layers_formula)
-                    ->searchable(['liner_code', 'liner_name']),
+                    ->searchable(['layers_formula']),
 
                 TextColumn::make('resinType.type_name')
                     ->label('Resin Type')

@@ -27,7 +27,7 @@ class ThicknessVacuumsTable
         })->values()->toArray();
 
         return $table
-        ->deferLoading()
+            ->deferLoading()
             ->query(
                 \App\Models\MasterDiameter::query()
                     ->with(['thicknessVacuums'])
@@ -38,13 +38,13 @@ class ThicknessVacuumsTable
                 TextColumn::make('no')
                     ->rowIndex()
                     ->width('50px'),
-                TextColumn::make('diameter_inch')
-                    ->label('Diameter (inch)')
-                    ->sortable(),
                 TextColumn::make('diameter_mm')
                     ->label('Diameter (mm)')
                     ->sortable()
                     ->weight('bold'),
+                TextColumn::make('diameter_inch')
+                    ->label('Diameter (inch)')
+                    ->sortable(),
                 ...$loadColumns,
             ])
             ->filters([])
