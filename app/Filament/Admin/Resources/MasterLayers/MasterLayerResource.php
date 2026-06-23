@@ -73,6 +73,6 @@ class MasterLayerResource extends BaseResource
 
     public static function getNavigationLabel(): string
     {
-        return 'Master Layer';
+        return 'Master Layer Structure';
     }
 }
