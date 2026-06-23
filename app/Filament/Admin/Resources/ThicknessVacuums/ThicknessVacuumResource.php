@@ -22,6 +22,8 @@ class ThicknessVacuumResource extends BaseResource
 {
     protected static ?string $model = ThicknessVacuum::class;
 
+    protected static ?int $navigationSort = 7;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'vacuum_type';

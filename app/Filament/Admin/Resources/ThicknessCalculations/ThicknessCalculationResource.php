@@ -23,6 +23,8 @@ class ThicknessCalculationResource extends BaseResource
 {
     protected static ?string $model = ThicknessCalculation::class;
 
+    protected static ?int $navigationSort = 8;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'brand_name';
