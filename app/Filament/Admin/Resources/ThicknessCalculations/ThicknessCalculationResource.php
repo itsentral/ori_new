@@ -70,7 +70,7 @@ class ThicknessCalculationResource extends BaseResource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Master Data';
+        return 'Developing Product';
     }
 
     public static function getNavigationLabel(): string
