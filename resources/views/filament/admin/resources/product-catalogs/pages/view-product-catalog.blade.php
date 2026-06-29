@@ -1,115 +1,201 @@
 <x-filament-panels::page>
 
     <style>
-    .pc-card {
-        border-radius: 0.75rem;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        margin-bottom: 16px;
-    }
-    .dark .pc-card { border-color: #374151; }
+        .fi-header-heading {
+            font-size: 1.4rem !important;
+        }
 
-    .pc-card-header {
-        background: #f9fafb;
-        padding: 12px 16px;
-        border-bottom: 1px solid #e5e7eb;
-    }
-    .dark .pc-card-header { background: #1f2937; border-color: #374151; }
+        .pc-card {
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
 
-    .pc-card-title {
-        font-weight: 600;
-        font-size: 14px;
-        color: #111827;
-        margin: 0;
-    }
-    .dark .pc-card-title { color: #f9fafb; }
+        .dark .pc-card {
+            border-color: #374151;
+        }
 
-    .pc-info-grid {
-        padding: 16px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-    }
+        .pc-card-header {
+            background: #f9fafb;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    .pc-info-label {
-        font-size: 11px;
-        color: #6b7280;
-        text-transform: uppercase;
-        font-weight: 600;
-        margin: 0 0 2px;
-    }
-    .dark .pc-info-label { color: #9ca3af; }
+        .dark .pc-card-header {
+            background: #1f2937;
+            border-color: #374151;
+        }
 
-    .pc-info-value {
-        font-size: 13px;
-        color: #111827;
-        font-weight: 500;
-        margin: 0;
-    }
-    .dark .pc-info-value { color: #f3f4f6; }
+        .pc-card-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #111827;
+            margin: 0;
+        }
 
-    .pc-wrap { overflow-x: auto; width: 100%; }
+        .dark .pc-card-title {
+            color: #f9fafb;
+        }
 
-    .pc-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-    }
+        .pc-info-grid {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
 
-    .pc-thead-tr {
-        background: #f9fafb;
-        border-bottom: 1px solid #e5e7eb;
-    }
-    .dark .pc-thead-tr { background: #1f2937; border-color: #374151; }
+        .pc-info-label {
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin: 0 0 2px;
+        }
 
-    .pc-th {
-        padding: 10px 8px;
-        font-weight: 600;
-        color: #374151;
-        text-align: center;
-        white-space: nowrap;
-    }
-    .dark .pc-th { color: #d1d5db; }
+        .dark .pc-info-label {
+            color: #9ca3af;
+        }
 
-    .pc-th-left { text-align: left; padding: 10px 16px; }
+        .pc-info-value {
+            font-size: 13px;
+            color: #111827;
+            font-weight: 500;
+            margin: 0;
+        }
 
-    .pc-tr-even { background: #ffffff; border-bottom: 1px solid #f3f4f6; }
-    .dark .pc-tr-even { background: #1f2937; border-color: #374151; }
+        .dark .pc-info-value {
+            color: #f3f4f6;
+        }
 
-    .pc-tr-odd { background: #f9fafb; border-bottom: 1px solid #f3f4f6; }
-    .dark .pc-tr-odd { background: #111827; border-color: #374151; }
+        .pc-wrap {
+            overflow-x: auto;
+            overflow-y: auto;
+            width: 100%;
+            max-height: 75vh;
+        }
 
-    .pc-td { text-align: center; padding: 10px 8px; color: #374151; }
-    .dark .pc-td { color: #d1d5db; }
+        .pc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
 
-    .pc-td-left { text-align: left; padding: 10px 16px; }
+        .pc-thead-tr {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-    .pc-diameter {
-        font-weight: 600;
-        color: #111827;
-        font-size: 13px;
-    }
-    .dark .pc-diameter { color: #f3f4f6; }
+        .dark .pc-thead-tr {
+            background: #1f2937;
+            border-color: #374151;
+        }
 
-    .pc-diameter-sub { font-size: 11px; color: #6b7280; }
-    .dark .pc-diameter-sub { color: #9ca3af; }
+        .pc-th {
+            padding: 10px 8px;
+            font-weight: 600;
+            color: #374151;
+            text-align: center;
+            white-space: nowrap;
+        }
 
-    .pc-total { font-weight: 700; color: #f97316; }
-    .dark .pc-total { color: #fb923c; }
+        .dark .pc-th {
+            color: #d1d5db;
+        }
 
-    .pc-brocure { font-weight: 700; color: #2563eb; }
-    .dark .pc-brocure { color: #60a5fa; }
+        .pc-th-left {
+            text-align: left;
+            padding: 10px 16px;
+        }
 
-    .pc-note {
-        padding: 12px 16px;
-        background: #fffbeb;
-        border: 1px solid #fcd34d;
-        border-radius: 8px;
-        margin-bottom: 16px;
-        font-size: 12px;
-        color: #92400e;
-    }
-    .dark .pc-note { background: #451a03; border-color: #d97706; color: #fcd34d; }
+        .pc-tr-even {
+            background: #ffffff;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dark .pc-tr-even {
+            background: #1f2937;
+            border-color: #374151;
+        }
+
+        .pc-tr-odd {
+            background: #f9fafb;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dark .pc-tr-odd {
+            background: #111827;
+            border-color: #374151;
+        }
+
+        .pc-td {
+            text-align: center;
+            padding: 10px 8px;
+            color: #374151;
+        }
+
+        .dark .pc-td {
+            color: #d1d5db;
+        }
+
+        .pc-td-left {
+            text-align: left;
+            padding: 10px 16px;
+        }
+
+        .pc-diameter {
+            font-weight: 600;
+            color: #111827;
+            font-size: 13px;
+        }
+
+        .dark .pc-diameter {
+            color: #f3f4f6;
+        }
+
+        .pc-diameter-sub {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .dark .pc-diameter-sub {
+            color: #9ca3af;
+        }
+
+        .pc-total {
+            font-weight: 700;
+            color: #f97316;
+        }
+
+        .dark .pc-total {
+            color: #fb923c;
+        }
+
+        .pc-brocure {
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .dark .pc-brocure {
+            color: #60a5fa;
+        }
+
+        .pc-note {
+            padding: 12px 16px;
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #92400e;
+        }
+
+        .dark .pc-note {
+            background: #451a03;
+            border-color: #d97706;
+            color: #fcd34d;
+        }
     </style>
 
     {{-- Informasi Kalkulasi --}}
@@ -130,16 +216,40 @@
                 <p class="pc-info-label">Liner</p>
                 <p class="pc-info-value">
                     @php
-                        $liner = $this->record->liner;
-                        $corrosionMap = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
-                        $tempMap = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
+                    $liner = $this->record->liner;
+                    $corrosionMap = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
+                    $tempMap = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
                     @endphp
                     @if ($liner)
-                        Corrosion: {{ $corrosionMap[$liner->corrosion] ?? '-' }} | Temp: {{ $tempMap[$liner->temprature] ?? '-' }}
+                    Corrosion: {{ $corrosionMap[$liner->corrosion] ?? '-' }} | Temp: {{ $tempMap[$liner->temprature] ?? '-' }}
                     @else
-                        -
+                    -
                     @endif
                 </p>
+            </div>
+            <div>
+                <p class="pc-info-label">Temp</p>
+                <p class="pc-info-value">{{ $this->record->temperature == 80 ? '>80°C' : '65°C' }}</p>
+            </div>
+            <div>
+                <p class="pc-info-label">PN</p>
+                <p class="pc-info-value">{{ $this->record->pn_name_snapshot ?? '-' }}</p>
+            </div>
+            <div>
+                <p class="pc-info-label">Vacuum</p>
+                <p class="pc-info-value">{{ ucfirst($this->record->vacuum_type ?? '-') }}</p>
+            </div>
+            <div>
+                <p class="pc-info-label">SN</p>
+                <p class="pc-info-value">{{ $this->record->stiffness_snapshot ? 'SN' . $this->record->stiffness_snapshot : '-' }}</p>
+            </div>
+            <div>
+                <p class="pc-info-label">External</p>
+                <p class="pc-info-value">{{ $this->record->external_thickness_snapshot ? $this->record->external_thickness_snapshot . ' mm' : '-' }}</p>
+            </div>
+            <div>
+                <p class="pc-info-label">Top Coat</p>
+                <p class="pc-info-value">{{ $this->record->use_top_coat ? 'Yes' : 'No' }}</p>
             </div>
             <div>
                 <p class="pc-info-label">Applications</p>
@@ -175,37 +285,37 @@
                 </thead>
                 <tbody>
                     @foreach ($this->record->details()->orderBy('diameter_mm_snapshot')->get() as $index => $detail)
-                        @php
-                            $selectedStructure = $detail->selected_thickness_value ?? 0;
-                            $totalFinal = $detail->thickness_liner + $selectedStructure + $detail->thickness_external + $detail->thickness_top_coat;
-                        @endphp
-                        <tr class="{{ $index % 2 === 0 ? 'pc-tr-even' : 'pc-tr-odd' }}">
-                            <td class="pc-td pc-td-left">
-                                <span class="pc-diameter">DN{{ $detail->diameter_mm_snapshot }}</span>
-                                <span class="pc-diameter-sub">({{ $detail->diameter_inch_snapshot }})</span>
-                            </td>
-                            <td class="pc-td">{{ number_format($detail->thickness_liner, 2) }}</td>
-                            <td class="pc-td">
-                                @if ($detail->selected_thickness_value)
-                                    {{ number_format($detail->selected_thickness_value, 2) }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td class="pc-td">{{ number_format($detail->thickness_external, 2) }}</td>
-                            <td class="pc-td">{{ number_format($detail->thickness_top_coat, 2) }}</td>
-                            <td class="pc-td"><span class="pc-total">{{ number_format($detail->total_thickness, 2) }}</span></td>
-                            <td class="pc-td">
-                                <span class="pc-total">{{ number_format($totalFinal, 2) }}</span>
-                            </td>
-                            <td class="pc-td">
-                                @if ($detail->thickness_brocure)
-                                    <span class="pc-brocure">{{ number_format($detail->thickness_brocure, 2) }}</span>
-                                @else
-                                    <span style="color: #9ca3af;">-</span>
-                                @endif
-                            </td>
-                        </tr>
+                    @php
+                    $selectedStructure = $detail->selected_thickness_value ?? 0;
+                    $totalFinal = $detail->thickness_liner + $selectedStructure + $detail->thickness_external + $detail->thickness_top_coat;
+                    @endphp
+                    <tr class="{{ $index % 2 === 0 ? 'pc-tr-even' : 'pc-tr-odd' }}">
+                        <td class="pc-td pc-td-left">
+                            <span class="pc-diameter">DN{{ $detail->diameter_mm_snapshot }}</span>
+                            <span class="pc-diameter-sub">({{ $detail->diameter_inch_snapshot }})</span>
+                        </td>
+                        <td class="pc-td">{{ number_format($detail->thickness_liner, 2) }}</td>
+                        <td class="pc-td">
+                            @if ($detail->selected_thickness_value)
+                            {{ number_format($detail->selected_thickness_value, 2) }}
+                            @else
+                            -
+                            @endif
+                        </td>
+                        <td class="pc-td">{{ number_format($detail->thickness_external, 2) }}</td>
+                        <td class="pc-td">{{ number_format($detail->thickness_top_coat, 2) }}</td>
+                        <td class="pc-td"><span class="pc-total">{{ number_format($detail->total_thickness, 2) }}</span></td>
+                        <td class="pc-td">
+                            <span class="pc-total">{{ number_format($totalFinal, 2) }}</span>
+                        </td>
+                        <td class="pc-td">
+                            @if ($detail->thickness_brocure)
+                            <span class="pc-brocure">{{ number_format($detail->thickness_brocure, 2) }}</span>
+                            @else
+                            <span style="color: #9ca3af;">-</span>
+                            @endif
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
