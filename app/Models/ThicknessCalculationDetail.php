@@ -29,6 +29,7 @@ class ThicknessCalculationDetail extends Model
         'thickness_upper_value',
         'selected_thickness_id',
         'selected_thickness_value',
+        'thickness_brocure',
         'thickness_structure_adjustment',
     ];
 
@@ -45,6 +46,7 @@ class ThicknessCalculationDetail extends Model
         'thickness_lower_value'          => 'decimal:2',
         'thickness_upper_value'          => 'decimal:2',
         'selected_thickness_value'       => 'decimal:2',
+        'thickness_brocure'              => 'decimal:2',
         'thickness_structure_adjustment' => 'decimal:4',
     ];
 

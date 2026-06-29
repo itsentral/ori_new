@@ -29,9 +29,11 @@ class PermissionMatrixInput extends Field
             'master_piece'                => 'Master Unit Packing',
             'master_pressure_nominal'     => 'Master Pressure Nominal',
             'master_standard_engineering' => 'Master Standard Engineering',
-            'master_layer'                => 'Master Layer',
+            'master_layer'                => 'Master Layer Structure',
             'master_application'          => 'Master Application',
-            'thickness_calculation'       => 'Thickness Calculation'
+            'thickness_calculation'       => 'Thickness Calculation',
+            'product_catalog'             => 'Product Catalog',
+            'master_weight_formula'       => 'Master Weight Formula'
         ];
 
         $this->default([]);

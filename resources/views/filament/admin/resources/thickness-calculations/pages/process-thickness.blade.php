@@ -359,8 +359,8 @@
                     <p class="pt-info-value">{{ ucfirst(str_replace('_', ' ', $this->record->layer_category)) }}</p>
                 </div>
                 <div>
-                    <p class="pt-info-label">Standard Product</p>
-                    <p class="pt-info-value">{{ $this->record->standard_product_name ?? '-' }}</p>
+                    <p class="pt-info-label">Applications</p>
+                    <p class="pt-info-value">{{ $this->record->applications->pluck('application_name')->join(', ') ?: '-' }}</p>
                 </div>
             </div>
         </div>
@@ -376,14 +376,27 @@
                             <th class="pt-th">Structure</th>
                             <th class="pt-th">External</th>
                             <th class="pt-th">Top Coat</th>
-                            <th class="pt-th">Total</th>
-                            {{-- <th class="pt-th">Rule</th> --}}
+                            <th class="pt-th">Total Thickness Theory</th>
                             <th class="pt-th">Layer</th>
-                            <th class="pt-th" style="min-width: 220px;">Pilih Thickness Final</th>
+                            <th class="pt-th">Nearest Layer Structure</th>
+                            <th class="pt-th">Total Final Thickness (Low)</th>
+                            <th class="pt-th">Total Final Thickness (High)</th>
+                            <th class="pt-th" style="min-width: 200px;">Pilih Final Thickness</th>
+                            <th class="pt-th" style="min-width: 120px;">Thickness Brocure</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($this->record->details()->orderBy('diameter_mm_snapshot')->get() as $index => $detail)
+                            @php
+                                // Calculate Total Final Thickness (Low) = Liner + Nearest Layer Structure (bawah) + External + Top Coat
+                                $totalFinalLow = $detail->thickness_lower_value
+                                    ? number_format($detail->thickness_liner + $detail->thickness_lower_value + $detail->thickness_external + $detail->thickness_top_coat, 2)
+                                    : '-';
+                                // Calculate Total Final Thickness (High) = Liner + Nearest Layer Structure (atas) + External + Top Coat
+                                $totalFinalHigh = $detail->thickness_upper_value
+                                    ? number_format($detail->thickness_liner + $detail->thickness_upper_value + $detail->thickness_external + $detail->thickness_top_coat, 2)
+                                    : '-';
+                            @endphp
                             <tr class="{{ $index % 2 === 0 ? 'pt-tr-even' : 'pt-tr-odd' }}">
                                 <td class="pt-td pt-td-left">
                                     <span class="pt-diameter">DN{{ $detail->diameter_mm_snapshot }}</span>
@@ -406,13 +419,6 @@
                                 <td class="pt-td">{{ $detail->thickness_external }}</td>
                                 <td class="pt-td">{{ $detail->thickness_top_coat }}</td>
                                 <td class="pt-td"><span class="pt-total">{{ $detail->total_thickness }}</span></td>
-                                {{-- <td class="pt-td">
-                                    @if ($detail->structure_rule === 'adjusted')
-                                        <span class="pt-badge-adjusted">Adjusted</span>
-                                    @else
-                                        <span class="pt-badge-asis">As Is</span>
-                                    @endif
-                                </td> --}}
                                 <td class="pt-td">
                                     @if ($detail->matched_layer_id)
                                         <button class="pt-layer-btn" wire:click="viewLayerDetail({{ $detail->id }})">
@@ -426,6 +432,30 @@
                                         <span class="pt-no-layer">-</span>
                                     @endif
                                 </td>
+                                {{-- Nearest Layer Structure (statis, tampilkan kedua nilai) --}}
+                                <td class="pt-td">
+                                    @if ($detail->matched_layer_id)
+                                        <div style="display: flex; flex-direction: column; gap: 2px; align-items: center;">
+                                            @if ($detail->thickness_lower_value)
+                                                <span style="font-size: 12px; color: #059669; font-weight: 600;">↓ {{ number_format($detail->thickness_lower_value, 2) }} mm</span>
+                                            @endif
+                                            @if ($detail->thickness_upper_value && $detail->thickness_upper_id != $detail->thickness_lower_id)
+                                                <span style="font-size: 12px; color: #7c3aed; font-weight: 600;">↑ {{ number_format($detail->thickness_upper_value, 2) }} mm</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="pt-no-layer">-</span>
+                                    @endif
+                                </td>
+                                {{-- Total Final Thickness (Low) --}}
+                                <td class="pt-td">
+                                    <span style="font-weight: 600; color: #059669;">{{ $totalFinalLow }}</span>
+                                </td>
+                                {{-- Total Final Thickness (High) --}}
+                                <td class="pt-td">
+                                    <span style="font-weight: 600; color: #7c3aed;">{{ $totalFinalHigh }}</span>
+                                </td>
+                                {{-- Pilih Final Thickness (Low atau High) --}}
                                 <td class="pt-td">
                                     @if ($detail->matched_layer_id)
                                         @if ($this->isViewMode)
@@ -441,21 +471,35 @@
                                                 @if ($detail->thickness_lower_id)
                                                     <label class="pt-radio-label {{ isset($selections[$detail->id]) && $selections[$detail->id] == $detail->thickness_lower_id ? 'selected' : '' }}">
                                                         <input type="radio" wire:model.live="selections.{{ $detail->id }}" value="{{ $detail->thickness_lower_id }}" style="accent-color: #3b82f6;" />
-                                                        <span class="pt-radio-value">{{ number_format($detail->thickness_lower_value, 2) }} mm</span>
-                                                        <span class="pt-radio-sub">(bawah)</span>
+                                                        <span class="pt-radio-value">{{ $totalFinalLow }}</span>
+                                                        <span class="pt-radio-sub">(Low)</span>
                                                     </label>
                                                 @endif
                                                 @if ($detail->thickness_upper_id && $detail->thickness_upper_id != $detail->thickness_lower_id)
                                                     <label class="pt-radio-label {{ isset($selections[$detail->id]) && $selections[$detail->id] == $detail->thickness_upper_id ? 'selected' : '' }}">
                                                         <input type="radio" wire:model.live="selections.{{ $detail->id }}" value="{{ $detail->thickness_upper_id }}" style="accent-color: #3b82f6;" />
-                                                        <span class="pt-radio-value">{{ number_format($detail->thickness_upper_value, 2) }} mm</span>
-                                                        <span class="pt-radio-sub">(atas)</span>
+                                                        <span class="pt-radio-value">{{ $totalFinalHigh }}</span>
+                                                        <span class="pt-radio-sub">(High)</span>
                                                     </label>
                                                 @endif
                                             </div>
                                         @endif
                                     @else
                                         <span class="pt-no-layer">Tidak ada layer</span>
+                                    @endif
+                                </td>
+                                {{-- Thickness Brocure --}}
+                                <td class="pt-td">
+                                    @if (!$this->isViewMode)
+                                        <input 
+                                            type="number" 
+                                            step="0.01"
+                                            wire:model.lazy="thicknessBrocure.{{ $detail->id }}"
+                                            style="width: 80px; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; text-align: center;"
+                                            placeholder="mm"
+                                        />
+                                    @else
+                                        <span style="font-weight: 600;">{{ $detail->thickness_brocure ? number_format($detail->thickness_brocure, 2) . ' mm' : '-' }}</span>
                                     @endif
                                 </td>
                             </tr>

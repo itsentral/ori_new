@@ -20,12 +20,19 @@ class ThicknessCalculationsTable
                     ->label('Brand Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('standard_product_name')
-                    ->label('Standard Product Name')
-                    ->searchable()
-                    ->limit(50),
-                TextColumn::make('liner_code_snapshot')
-                    ->label('Liner'),
+                TextColumn::make('liner_id')
+                    ->label('Liner')
+                    ->formatStateUsing(function ($record) {
+                        $liner = $record->liner;
+                        if (!$liner) {
+                            return '-';
+                        }
+                        $corrosionMap = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
+                        $tempMap = [1 => 'Low', 2 => 'Medium', 3 => 'High'];
+                        $corrosion = $corrosionMap[$liner->corrosion] ?? '-';
+                        $temp = $tempMap[$liner->temprature] ?? '-';
+                        return "Corrosion: {$corrosion} | Temp: {$temp}";
+                    }),
                 TextColumn::make('temperature')
                     ->label('Temp')
                     ->formatStateUsing(fn($state) => $state == 80 ? '>80°C' : '65°C'),
@@ -43,9 +50,10 @@ class ThicknessCalculationsTable
                 TextColumn::make('use_top_coat')
                     ->label('Top Coat')
                     ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No'),
-                TextColumn::make('applications_count')
+                TextColumn::make('applications.application_name')
                     ->label('Applications')
-                    ->counts('applications'),
+                    ->badge()
+                    ->separator(', '),
                 TextColumn::make('creator.full_name')
                     ->label('Dibuat oleh')
                     ->toggleable(isToggledHiddenByDefault: true),
