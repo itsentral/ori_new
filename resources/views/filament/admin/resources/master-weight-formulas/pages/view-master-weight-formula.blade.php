@@ -5,7 +5,7 @@
     border-radius: 0.75rem;
     border: 1px solid #e5e7eb;
     overflow: hidden;
-    margin-bottom: 16px;
+    margin-bottom: 6px;
 }
 .dark .mwf-card { border-color: #374151; }
 
@@ -131,11 +131,15 @@
     background: #eff6ff;
     border: 1px solid #bfdbfe;
     border-radius: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 6px;
     font-size: 12px;
     color: #1d4ed8;
 }
 .dark .mwf-note { background: #1e3a5f; border-color: #1d4ed8; color: #60a5fa; }
+
+.fi-page-content {
+    row-gap: calc(var(--spacing) * 5)
+}
 </style>
 
 <div class="mwf-note">

@@ -5,7 +5,7 @@
     border-radius: 0.75rem;
     border: 1px solid #e5e7eb;
     overflow: hidden;
-    margin-bottom: 16px;
+    margin-bottom: 6px;
 }
 .dark .ef-card { border-color: #374151; }
 

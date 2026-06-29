@@ -32,6 +32,12 @@ class ViewProductCatalog extends Page
                 ->icon('heroicon-m-arrow-left')
                 ->color('gray')
                 ->url(ProductCatalogResource::getUrl('index')),
+            Action::make('export')
+                ->label('Download Excel')
+                ->icon('heroicon-m-arrow-down-tray')
+                ->color('success')
+                ->url(fn() => route('product-catalog.export', ['record' => $this->record]))
+                ->openUrlInNewTab(),
         ];
     }
 }
