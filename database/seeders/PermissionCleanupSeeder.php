@@ -27,7 +27,9 @@ class PermissionCleanupSeeder extends Seeder
             'master_standard_engineering',
             'master_layer',
             'master_application',
-            'thickness_calculation'
+            'thickness_calculation',
+            'product_catalog',
+            'master_weight_formula',
         ];
 
         $actions = ['view', 'add', 'manage', 'delete'];

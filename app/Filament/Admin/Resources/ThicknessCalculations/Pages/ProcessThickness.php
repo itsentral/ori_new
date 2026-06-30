@@ -18,6 +18,7 @@ class ProcessThickness extends Page
 
     public ThicknessCalculation $record;
     public array $selections = [];
+    public array $thicknessBrocure = [];
     public bool $isRecalculating = true;
     public bool $isViewMode = false;
 
@@ -44,6 +45,9 @@ class ProcessThickness extends Page
         foreach ($record->details as $detail) {
             $this->selections[$detail->id] = $detail->selected_thickness_id
                 ? (string) $detail->selected_thickness_id
+                : null;
+            $this->thicknessBrocure[$detail->id] = $detail->thickness_brocure
+                ? (string) $detail->thickness_brocure
                 : null;
         }
     }
@@ -146,6 +150,9 @@ class ProcessThickness extends Page
             $this->selections[$detail->id] = $detail->selected_thickness_id
                 ? (string) $detail->selected_thickness_id
                 : null;
+            $this->thicknessBrocure[$detail->id] = $detail->thickness_brocure
+                ? (string) $detail->thickness_brocure
+                : null;
         }
 
         $this->isRecalculating = false;
@@ -210,17 +217,6 @@ class ProcessThickness extends Page
     {
         $details = $this->record->details()->whereNotNull('matched_layer_id')->get();
 
-        // foreach ($details as $detail) {
-        //     if (empty($this->selections[$detail->id])) {
-        //         Notification::make()
-        //             ->title('Ada thickness yang belum dipilih!')
-        //             ->body("DN {$detail->diameter_inch_snapshot} ({$detail->diameter_mm_snapshot} mm) belum dipilih.")
-        //             ->danger()
-        //             ->send();
-        //         return;
-        //     }
-        // }
-
         foreach ($details as $detail) {
             $selectedId = $this->selections[$detail->id] ?? null;
             if (!$selectedId) continue;
@@ -230,6 +226,7 @@ class ProcessThickness extends Page
             $detail->update([
                 'selected_thickness_id'    => (int) $selectedId,
                 'selected_thickness_value' => $thickness?->thickness,
+                'thickness_brocure'        => $this->thicknessBrocure[$detail->id] ?? null,
             ]);
 
             ThicknessCalculationLayerSelection::updateOrCreate(
@@ -250,14 +247,25 @@ class ProcessThickness extends Page
             );
         }
 
-        // $this->record->update(['layer_selection_status' => 'selected']);
+        // Also save thickness_brocure for details without matched_layer_id
+        $allDetails = $this->record->details()->get();
+        foreach ($allDetails as $detail) {
+            if (isset($this->thicknessBrocure[$detail->id]) && !$detail->matched_layer_id) {
+                $detail->update([
+                    'thickness_brocure' => $this->thicknessBrocure[$detail->id] ?? null,
+                ]);
+            }
+        }
+
+        $this->record->update(['layer_selection_status' => 'selected']);
 
         Notification::make()
             ->title('Berhasil disimpan!')
+            ->body('Data telah masuk ke Product Catalog.')
             ->success()
             ->send();
 
-        $this->redirect(ThicknessCalculationResource::getUrl('index'));
+        $this->redirect(\App\Filament\Admin\Resources\ProductCatalogs\ProductCatalogResource::getUrl('index'));
     }
 
     public ?int $selectedDetailId = null;

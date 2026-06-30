@@ -72,6 +72,8 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::SIDEBAR_NAV_START,
                 fn() => view('components.sidebar-search')
-            );
+            )
+            ->sidebarWidth('18.4rem')
+            ->collapsedSidebarWidth('5rem');
     }
 }
