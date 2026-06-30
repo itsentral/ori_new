@@ -5,6 +5,10 @@
             font-size: 1.4rem !important;
         }
 
+        .pc-info-shift {
+            padding-left: 80px;
+        }
+
         .pc-card {
             border-radius: 0.75rem;
             border: 1px solid #e5e7eb;
@@ -227,7 +231,7 @@
                     @endif
                 </p>
             </div>
-            <div>
+            <div class="pc-info-shift">
                 <p class="pc-info-label">Temp</p>
                 <p class="pc-info-value">{{ $this->record->temperature == 80 ? '>80°C' : '65°C' }}</p>
             </div>
@@ -247,7 +251,7 @@
                 <p class="pc-info-label">External</p>
                 <p class="pc-info-value">{{ $this->record->external_thickness_snapshot ? $this->record->external_thickness_snapshot . ' mm' : '-' }}</p>
             </div>
-            <div>
+            <div class="pc-info-shift">
                 <p class="pc-info-label">Top Coat</p>
                 <p class="pc-info-value">{{ $this->record->use_top_coat ? 'Yes' : 'No' }}</p>
             </div>
