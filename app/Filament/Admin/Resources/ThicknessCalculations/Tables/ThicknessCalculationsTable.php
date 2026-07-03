@@ -4,8 +4,10 @@ namespace App\Filament\Admin\Resources\ThicknessCalculations\Tables;
 
 use App\Filament\Admin\Resources\ThicknessCalculations\ThicknessCalculationResource;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\ActionGroup;
 
 class ThicknessCalculationsTable
 {
@@ -65,22 +67,26 @@ class ThicknessCalculationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([
-                ...ThicknessCalculationResource::getRecordActions(),
+                ActionsActionGroup::make([
+                    ...ThicknessCalculationResource::getRecordActions(),
 
-                Action::make('view_thickness')
-                    ->label('Lihat Thickness')
-                    ->icon('heroicon-o-eye')
-                    ->color('info')
-                    ->visible(fn($record) => $record->layer_selection_status === 'selected')
-                    ->url(fn($record) => ThicknessCalculationResource::getUrl('process-thickness', ['record' => $record])),
+                    Action::make('view_thickness')
+                        ->label('Lihat Thickness')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->visible(fn($record) => $record->layer_selection_status === 'selected')
+                        ->url(fn($record) => ThicknessCalculationResource::getUrl('process-thickness', ['record' => $record])),
 
-                Action::make('proses_thickness')
-                    ->label('Proses Thickness')
-                    ->icon('heroicon-o-cog')
-                    ->color('warning')
-                    // ->visible(fn($record) => $record->layer_selection_status === 'pending')
-                    ->url(fn($record) => ThicknessCalculationResource::getUrl('process-thickness', ['record' => $record]))
-
+                    Action::make('proses_thickness')
+                        ->label('Proses Thickness')
+                        ->icon('heroicon-o-cog')
+                        ->color('warning')
+                        // ->visible(fn($record) => $record->layer_selection_status === 'pending')
+                        ->url(fn($record) => ThicknessCalculationResource::getUrl('process-thickness', ['record' => $record])),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical') 
+                    ->tooltip('Menu Action') 
+                    ->color('gray'),
             ]);
     }
 }

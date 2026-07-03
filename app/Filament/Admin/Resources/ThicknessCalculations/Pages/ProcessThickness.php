@@ -40,7 +40,13 @@ class ProcessThickness extends Page
     public function mount(ThicknessCalculation $record): void
     {
         $this->record = $record;
-        $this->isViewMode = false; 
+
+        $mode = request()->query('mode', 'edit');
+        $this->isViewMode = $mode === 'view';
+
+        if ($this->isViewMode) {
+            $this->isRecalculating = false;
+        }
 
         foreach ($record->details as $detail) {
             $this->selections[$detail->id] = $detail->selected_thickness_id
@@ -100,14 +106,14 @@ class ProcessThickness extends Page
                 ->label('Hitung Ulang')
                 ->icon('heroicon-m-arrow-path')
                 ->color('warning')
-                ->hidden(fn() => $this->isRecalculating) 
+                ->hidden(fn() => $this->isRecalculating || $this->isViewMode)
                 ->action('recalculate'),
 
             Action::make('save')
                 ->label('Simpan Pilihan')
                 ->icon('heroicon-m-check')
                 ->color('success')
-                ->hidden(fn() => $this->isRecalculating)
+                ->hidden(fn() => $this->isRecalculating || $this->isViewMode)
                 ->action('saveSelections'),
         ];
     }
