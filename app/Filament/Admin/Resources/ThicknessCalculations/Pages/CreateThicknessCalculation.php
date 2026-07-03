@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\ThicknessCalculations\Pages;
 
 use App\Filament\Admin\Resources\ThicknessCalculations\ThicknessCalculationResource;
-use App\Models\MasterApplication;
 use App\Services\ThicknessCalculationService;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -63,8 +62,7 @@ class CreateThicknessCalculation extends CreateRecord
         // Assign applications
         $selectedIds = $data['application_ids'] ?? [];
         if (!empty($selectedIds)) {
-            MasterApplication::whereIn('id', $selectedIds)
-                ->update(['calculation_id' => $record->id]);
+            $record->applications()->sync($selectedIds);
         }
     }
 

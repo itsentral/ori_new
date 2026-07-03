@@ -53,7 +53,8 @@ class ThicknessCalculationsTable
                 TextColumn::make('applications.application_name')
                     ->label('Applications')
                     ->badge()
-                    ->separator(', '),
+                    ->listWithLineBreaks()
+                    ->bulleted(),
                 TextColumn::make('creator.full_name')
                     ->label('Dibuat oleh')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -79,7 +80,7 @@ class ThicknessCalculationsTable
                     ->color('warning')
                     // ->visible(fn($record) => $record->layer_selection_status === 'pending')
                     ->url(fn($record) => ThicknessCalculationResource::getUrl('process-thickness', ['record' => $record]))
-                    
+
             ]);
     }
 }

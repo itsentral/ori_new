@@ -57,12 +57,8 @@ class ThicknessCalculation extends Model
         });
 
         static::deleting(function ($model) {
-            MasterApplication::where('calculation_id', $model->id)
-                ->update(['calculation_id' => null]);
+            $model->applications()->detach();
         });
-
-        // Saat di-restore, tidak perlu re-assign otomatis
-        // karena aplikasi sudah bebas dan bisa dipilih lagi
     }
 
     private static function generateCode(): string
@@ -83,7 +79,8 @@ class ThicknessCalculation extends Model
 
     public function applications()
     {
-        return $this->hasMany(MasterApplication::class, 'calculation_id');
+        return $this->belongsToMany(MasterApplication::class, 'application_calculation', 'calculation_id', 'application_id')
+            ->withTimestamps();
     }
 
     public function liner()

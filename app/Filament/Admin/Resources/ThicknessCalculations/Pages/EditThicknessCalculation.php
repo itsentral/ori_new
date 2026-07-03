@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\ThicknessCalculations\Pages;
 
 use App\Filament\Admin\Resources\ThicknessCalculations\ThicknessCalculationResource;
-use App\Models\MasterApplication;
 use App\Services\ThicknessCalculationService;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -27,9 +26,7 @@ class EditThicknessCalculation extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['application_ids'] = MasterApplication::where('calculation_id', $this->record->id)
-            ->pluck('id')
-            ->toArray();
+        $data['application_ids'] = $this->record->applications()->pluck('master_applications.id')->toArray();
 
         if (empty($data['pn_name_snapshot']) || empty($data['pn_value_snapshot'])) {
             $pn = \App\Models\MasterPressureNominal::find($data['pressure_nominal_id'] ?? null);
@@ -86,16 +83,8 @@ class EditThicknessCalculation extends EditRecord
         $record      = $this->getRecord();
         $selectedIds = $this->data['application_ids'] ?? [];
 
-        // Lepas aplikasi yang tidak dipilih lagi
-        MasterApplication::where('calculation_id', $record->id)
-            ->whereNotIn('id', $selectedIds)
-            ->update(['calculation_id' => null]);
-
-        // Assign aplikasi baru
-        if (!empty($selectedIds)) {
-            MasterApplication::whereIn('id', $selectedIds)
-                ->update(['calculation_id' => $record->id]);
-        }
+        // Sync applications (many-to-many)
+        $record->applications()->sync($selectedIds);
 
         // Hapus detail & selection lama lalu regenerate
         $record->layerSelections()->delete();
