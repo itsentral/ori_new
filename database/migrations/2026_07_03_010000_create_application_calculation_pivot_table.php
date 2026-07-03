@@ -8,29 +8,36 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('application_calculation', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('calculation_id')->constrained('thickness_calculations')->cascadeOnDelete();
-            $table->foreignId('application_id')->constrained('master_applications')->cascadeOnDelete();
-            $table->timestamps();
-        });
-
-        // Migrate existing data from calculation_id column
-        $applications = \App\Models\MasterApplication::whereNotNull('calculation_id')->get();
-        foreach ($applications as $app) {
-            \Illuminate\Support\Facades\DB::table('application_calculation')->insert([
-                'calculation_id' => $app->calculation_id,
-                'application_id' => $app->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        if (!Schema::hasTable('application_calculation')) {
+            Schema::create('application_calculation', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('calculation_id')->constrained('thickness_calculations')->cascadeOnDelete();
+                $table->foreignId('application_id')->constrained('master_applications')->cascadeOnDelete();
+                $table->timestamps();
+            });
         }
 
-        // Remove old column
-        Schema::table('master_applications', function (Blueprint $table) {
-            $table->dropForeign(['calculation_id']);
-            $table->dropColumn('calculation_id');
-        });
+        // Migrate existing data from calculation_id column (if column still exists)
+        if (Schema::hasColumn('master_applications', 'calculation_id')) {
+            $applications = \Illuminate\Support\Facades\DB::table('master_applications')
+                ->whereNotNull('calculation_id')
+                ->get();
+
+            foreach ($applications as $app) {
+                \Illuminate\Support\Facades\DB::table('application_calculation')->insert([
+                    'calculation_id' => $app->calculation_id,
+                    'application_id' => $app->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Remove old column
+            Schema::table('master_applications', function (Blueprint $table) {
+                $table->dropForeign(['calculation_id']);
+                $table->dropColumn('calculation_id');
+            });
+        }
     }
 
     public function down(): void
