@@ -47,8 +47,9 @@ class MasterApplication extends Model
         return 'APP-' . str_pad($last + 1, 3, '0', STR_PAD_LEFT);
     }
 
-    public function calculation()
+    public function calculations()
     {
-        return $this->belongsTo(ThicknessCalculation::class, 'calculation_id');
+        return $this->belongsToMany(ThicknessCalculation::class, 'application_calculation', 'application_id', 'calculation_id')
+            ->withTimestamps();
     }
 }

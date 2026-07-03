@@ -19,9 +19,7 @@ class ViewThicknessCalculation extends ViewRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['application_ids'] = \App\Models\MasterApplication::where('calculation_id', $this->record->id)
-            ->pluck('id')
-            ->toArray();
+        $data['application_ids'] = $this->record->applications()->pluck('master_applications.id')->toArray();
 
         // Re-fill snapshot
         if (empty($data['pn_value_snapshot'])) {

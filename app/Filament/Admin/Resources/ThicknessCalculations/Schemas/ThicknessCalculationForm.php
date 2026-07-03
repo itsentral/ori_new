@@ -203,13 +203,8 @@ class ThicknessCalculationForm
                     Select::make('application_ids')
                         ->label('Application')
                         ->multiple()
-                        ->options(function ($record) {
-                            return MasterApplication::where(function ($q) use ($record) {
-                                $q->whereNull('calculation_id');
-                                if ($record) {
-                                    $q->orWhere('calculation_id', $record->id);
-                                }
-                            })->pluck('application_name', 'id');
+                        ->options(function () {
+                            return MasterApplication::pluck('application_name', 'id');
                         })
                         ->preload()
                         ->columnSpan(2),
