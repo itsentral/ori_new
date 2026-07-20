@@ -34,18 +34,16 @@ class ThicknessLinerForm
     {
         return $schema
             ->components([
-                // Hanya tampil saat edit, auto-generated saat create
-                TextInput::make('liner_code')
-                    ->label('Liner Code')
-                    ->readonly()
-                    ->placeholder('Auto generated saat simpan')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['class' => 'font-bold bg-gray-50 text-primary-600'])
-                    ->visibleOn('edit'),
-
                 Grid::make(3)
                     ->columnSpanFull()
                     ->schema([
+                        TextInput::make('liner_code')
+                            ->label('Liner Code')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->live(onBlur: true)
+                            ->extraInputAttributes(['class' => 'readonly-highlight-input']),
+
                         Select::make('corrosion')
                             ->label('Corrosion Resistance')
                             ->options([1 => 'Low', 2 => 'Medium', 3 => 'High'])
@@ -58,29 +56,6 @@ class ThicknessLinerForm
                             ->required()
                             ->native(false),
 
-                        Select::make('material_type_id')
-                            ->label('Resin Type')
-                            ->options(MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
-                            ->searchable()
-                            ->preload()
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                if (!$state) {
-                                    $set('material_type_code', null);
-                                    $set('material_type_name', null);
-                                    return;
-                                }
-                                $material = MasterMaterialType::find($state);
-                                if ($material) {
-                                    $set('material_type_name', $material->type_name);
-                                    $set('material_type_code', $material->type_code);
-                                }
-                            }),
-
-                        Hidden::make('material_type_code'),
-                        Hidden::make('material_type_name'),
-
                         TextInput::make('thickness_actual')
                             ->label('Thickness Specs')
                             ->numeric()
@@ -91,15 +66,15 @@ class ThicknessLinerForm
                             ->readonly()
                             ->default(0.00)
                             ->placeholder('auto')
-                            ->extraInputAttributes(['class' => 'bg-gray-100']),
+                            ->extraInputAttributes(['class' => 'readonly-highlight-input']),
+
+                        TextInput::make('layers_formula')
+                            ->label('Formula Layer')
+                            ->readonly()
+                            ->placeholder('automatically from the layer')
+                            ->extraInputAttributes(['class' => 'readonly-highlight-input']),
                     ]),
 
-                TextInput::make('layers_formula')
-                    ->label('Formula Layer')
-                    ->readonly()
-                    ->placeholder('automatically from the layer')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['class' => 'font-bold bg-gray-50']),
 
                 Repeater::make('layers')
                     ->relationship('layers')

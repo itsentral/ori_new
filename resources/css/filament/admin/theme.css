@@ -1,0 +1,25 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/Admin/**/*';
+@source '../../../../resources/views/filament/admin/**/*';
+
+.thickness-form-section {
+    align-self: start;
+}
+
+.thickness-form-section .fi-section-content,
+.thickness-form-section .fi-section-content-ctn {
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+
+.readonly-highlight-input {
+    background-color: #f9fafb !important;
+    color: var(--color-primary-600) !important;
+    font-weight: 700 !important;
+}
+
+.dark .readonly-highlight-input {
+    background-color: #1f2937 !important;
+    color: var(--color-primary-400) !important;
+}

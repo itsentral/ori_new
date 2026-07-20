@@ -23,8 +23,6 @@ class ThicknessExternalInfoList
                             ->copyable()
                             ->color('primary'),
 
-                        TextEntry::make('material_type_name')
-                            ->label('Material Type Name'),
 
                         TextEntry::make('layers_formula')
                             ->label('Formula Layer')

@@ -16,10 +16,6 @@ class ThicknessLiner extends Model
         'liner_code',
         'corrosion',
         'temprature',
-        'material_type_code',
-        'material_type_name',
-        'material_type_id',
-        'material_id',
         'thickness_actual',
         'thickness_teori',
         'layers_formula',
@@ -49,7 +45,6 @@ class ThicknessLiner extends Model
     {
         $query = static::where('corrosion', $data['corrosion'])
             ->where('temprature', $data['temprature'])
-            ->where('material_type_id', $data['material_type_id'])
             ->where('thickness_actual', $data['thickness_actual'])
             ->where('layers_formula', $data['layers_formula']);
 
@@ -60,29 +55,9 @@ class ThicknessLiner extends Model
         return $query->exists();
     }
 
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::creating(function (ThicknessLiner $model) {
-            if (empty($model->liner_code) && $model->material_type_code) {
-                $model->liner_code = static::generateLinerCode($model->material_type_code);
-            }
-        });
-    }
 
     public function layers(): HasMany
     {
         return $this->hasMany(ThicknessLinerLayer::class, 'liner_id');
-    }
-
-    public function resinType(): BelongsTo
-    {
-        return $this->belongsTo(MasterMaterialType::class, 'material_type_id');
-    }
-
-    public function material(): BelongsTo
-    {
-        return $this->belongsTo(MasterMaterial::class, 'material_id');
     }
 }

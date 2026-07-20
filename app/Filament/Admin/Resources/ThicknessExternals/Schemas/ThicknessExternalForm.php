@@ -33,39 +33,15 @@ class ThicknessExternalForm
     {
         return $schema
             ->components([
-                TextInput::make('external_code')
-                    ->label('External Code')
-                    ->readonly()
-                    ->placeholder('Auto generated saat simpan')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['class' => 'font-bold bg-gray-50 text-primary-600'])
-                    ->visibleOn('edit'),
-
-                Grid::make(3)
+                Grid::make(2)
                     ->columnSpanFull()
                     ->schema([
-                        Select::make('material_type_id')
-                            ->label('Resin Type')
-                            ->options(MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
-                            ->searchable()
-                            ->preload()
+                        TextInput::make('external_code')
+                            ->label('External Code')
                             ->required()
-                            ->live()
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                if (!$state) {
-                                    $set('material_type_code', null);
-                                    $set('material_type_name', null);
-                                    return;
-                                }
-                                $material = MasterMaterialType::find($state);
-                                if ($material) {
-                                    $set('material_type_name', $material->type_name);
-                                    $set('material_type_code', $material->type_code);
-                                }
-                            }),
-
-                        Hidden::make('material_type_code'),
-                        Hidden::make('material_type_name'),
+                            ->unique(ignoreRecord: true)
+                            ->live(onBlur: true)
+                            ->extraInputAttributes(['class' => 'readonly-highlight-input']),
 
                         TextInput::make('thickness_actual')
                             ->label('Thickness Specs')
@@ -77,15 +53,14 @@ class ThicknessExternalForm
                             ->readonly()
                             ->default(0.00)
                             ->placeholder('auto')
-                            ->extraInputAttributes(['class' => 'bg-gray-100']),
-                    ]),
+                            ->extraInputAttributes(['class' => 'readonly-highlight-input']),
 
-                TextInput::make('layers_formula')
-                    ->label('Formula Layer')
-                    ->readonly()
-                    ->placeholder('automatically from the layer')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['class' => 'font-bold bg-gray-50']),
+                        TextInput::make('layers_formula')
+                            ->label('Formula Layer')
+                            ->readonly()
+                            ->placeholder('automatically from the layer')
+                            ->extraInputAttributes(['class' => 'readonly-highlight-input']),
+                    ]),
 
                 Repeater::make('layers')
                     ->relationship('layers')

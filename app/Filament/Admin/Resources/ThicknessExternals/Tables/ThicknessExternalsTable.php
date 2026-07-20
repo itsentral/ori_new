@@ -24,12 +24,7 @@ class ThicknessExternalsTable
 
                 TextColumn::make('layers_formula')
                     ->label('Formula')
-                    ->description(fn($record) => $record->material_type_name)
                     ->searchable(),
-
-                TextColumn::make('resinType.type_name')
-                    ->label('Resin Type')
-                    ->sortable(),
 
                 TextColumn::make('thickness_actual')
                     ->label('Specs. Thick')

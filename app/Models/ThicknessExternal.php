@@ -14,9 +14,6 @@ class ThicknessExternal extends Model
 
     protected $fillable = [
         'external_code',
-        'material_type_id',
-        'material_type_code',
-        'material_type_name',
         'thickness_actual',
         'thickness_teori',
         'layers_formula',
@@ -44,8 +41,7 @@ class ThicknessExternal extends Model
 
     public static function isDuplicate(array $data, ?int $excludeId = null): bool
     {
-        $query = static::where('material_type_id', $data['material_type_id'])
-            ->where('thickness_actual', $data['thickness_actual'])
+        $query = static::where('thickness_actual', $data['thickness_actual'])
             ->where('layers_formula', $data['layers_formula']);
 
         if ($excludeId) {
@@ -69,10 +65,5 @@ class ThicknessExternal extends Model
     public function layers(): HasMany
     {
         return $this->hasMany(ThicknessExternalLayer::class, 'external_id');
-    }
-
-    public function resinType(): BelongsTo
-    {
-        return $this->belongsTo(MasterMaterialType::class, 'material_type_id');
     }
 }

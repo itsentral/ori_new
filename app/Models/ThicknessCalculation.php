@@ -34,6 +34,11 @@ class ThicknessCalculation extends Model
         'created_by',
         'layer_category',
         'layer_selection_status',
+        'technology_id',
+        'liner_resin_id',
+        'structure_resin_id',
+        'external_resin_id',
+        'top_coat_resin_id',
     ];
 
     protected $casts = [
@@ -106,5 +111,30 @@ class ThicknessCalculation extends Model
     public function external(): BelongsTo
     {
         return $this->belongsTo(MasterThicknessExternal::class, 'external_id');
+    }
+
+    public function technology(): BelongsTo
+    {
+        return $this->belongsTo(MasterTechnology::class, 'technology_id');
+    }
+
+    public function linerResin(): BelongsTo
+    {
+        return $this->belongsTo(MasterMaterialType::class, 'liner_resin_id');
+    }
+
+    public function structureResin(): BelongsTo
+    {
+        return $this->belongsTo(MasterMaterialType::class, 'structure_resin_id');
+    }
+
+    public function externalResin(): BelongsTo
+    {
+        return $this->belongsTo(MasterMaterialType::class, 'external_resin_id');
+    }
+
+    public function topCoatResin(): BelongsTo
+    {
+        return $this->belongsTo(MasterMaterialType::class, 'top_coat_resin_id');
     }
 }

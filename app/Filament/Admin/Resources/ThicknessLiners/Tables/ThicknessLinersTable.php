@@ -42,10 +42,6 @@ class ThicknessLinersTable
                     ->description(fn($record) => $record->layers_formula)
                     ->searchable(['layers_formula']),
 
-                TextColumn::make('resinType.type_name')
-                    ->label('Resin Type')
-                    ->sortable(),
-
                 TextColumn::make('thickness_actual')
                     ->label('Specs. Thick')
                     ->suffix(' mm')

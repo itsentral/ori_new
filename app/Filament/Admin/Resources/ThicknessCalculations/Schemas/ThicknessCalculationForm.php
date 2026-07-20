@@ -16,21 +16,50 @@ use Filament\Forms\Components\Hidden;
 
 class ThicknessCalculationForm
 {
+    protected static function updateBrandName(\Filament\Schemas\Components\Utilities\Get $get, \Filament\Schemas\Components\Utilities\Set $set): void
+    {
+        $linerResinId = $get('liner_resin_id');
+        $linerId = $get('liner_id');
+        $pnId = $get('pressure_nominal_id');
+        $techId = $get('technology_id');
+
+        $parts = [];
+
+        if ($linerResinId) {
+            $parts[] = \App\Models\MasterMaterialType::find($linerResinId)?->type_code ?? '';
+        }
+        if ($linerId) {
+            $parts[] = \App\Models\ThicknessLiner::find($linerId)?->liner_code ?? '';
+        }
+        if ($pnId) {
+            $parts[] = \App\Models\MasterPressureNominal::find($pnId)?->pn_name ?? '';
+        }
+        if ($techId) {
+            $parts[] = \App\Models\MasterTechnology::find($techId)?->technology_option ?? '';
+        }
+
+        $brandName = implode(' - ', array_filter($parts));
+        $set('brand_name', $brandName);
+    }
+
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
 
             Section::make('Informasi Umum')
+                ->extraAttributes(['class' => 'thickness-form-section'])
                 ->columns(2)
                 ->schema([
                     TextInput::make('brand_name')
                         ->label('Brand Name')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpan(2),
+                        ->readonly()
+                        ->placeholder('Auto generated')
+                        ->columnSpan(2)
+                        ->extraInputAttributes(['class' => 'readonly-highlight-input']),
                 ]),
 
             Section::make('Liner')
+                ->extraAttributes(['class' => 'thickness-form-section'])
                 ->columns(2)
                 ->schema([
                     Select::make('liner_id')
@@ -60,13 +89,18 @@ class ThicknessCalculationForm
                             })
                         )
                         ->reactive()
-                        ->afterStateUpdated(function ($state, $set) {
+                        ->afterStateUpdated(function ($state, $set, $get) {
                             if ($state) {
                                 $liner = ThicknessLiner::find($state);
                                 $set('liner_code_snapshot', $liner?->liner_code);
                                 $set('liner_material_type_snapshot', $liner?->material_type_name);
                                 $set('liner_thickness_snapshot', $liner?->thickness_teori);
+                            } else {
+                                $set('liner_code_snapshot', null);
+                                $set('liner_material_type_snapshot', null);
+                                $set('liner_thickness_snapshot', null);
                             }
+                            self::updateBrandName($get, $set);
                         })
                         ->columnSpan(2),
 
@@ -76,7 +110,8 @@ class ThicknessCalculationForm
                 ]),
 
             Section::make('Struktur')
-                ->columns(3)
+                ->extraAttributes(['class' => 'thickness-form-section'])
+                ->columns(2)
                 ->schema([
                     Select::make('temperature')
                         ->label('temprature')
@@ -97,12 +132,16 @@ class ThicknessCalculationForm
                                 )
                         )
                         ->reactive()
-                        ->afterStateUpdated(function ($state, $set) {
+                        ->afterStateUpdated(function ($state, $set, $get) {
                             if ($state) {
                                 $pn = MasterPressureNominal::find($state);
                                 $set('pn_name_snapshot', $pn?->pn_name);
                                 $set('pn_value_snapshot', $pn?->pn_value);
+                            } else {
+                                $set('pn_name_snapshot', null);
+                                $set('pn_value_snapshot', null);
                             }
+                            self::updateBrandName($get, $set);
                         }),
 
                     Select::make('stiffness_snapshot')
@@ -153,6 +192,7 @@ class ThicknessCalculationForm
             // ThicknessCalculationForm.php — Section External & Top Coat
 
             Section::make('External & Top Coat')
+                ->extraAttributes(['class' => 'thickness-form-section'])
                 ->columns(2)
                 ->schema([
                     Toggle::make('use_external')
@@ -160,7 +200,8 @@ class ThicknessCalculationForm
                         ->reactive(),
 
                     Toggle::make('use_top_coat')
-                        ->label('Pakai Top Coat?'),
+                        ->label('Pakai Top Coat?')
+                        ->live(),
 
                     Select::make('external_id')
                         ->label('Pilih External')
@@ -189,7 +230,8 @@ class ThicknessCalculationForm
                     Hidden::make('external_thickness_snapshot'),
                 ]),
 
-            Section::make('Layer & Application')
+            Section::make('Layer, Technology & Application')
+                ->extraAttributes(['class' => 'thickness-form-section'])
                 ->columns(2)
                 ->schema([
                     Select::make('layer_category')
@@ -200,6 +242,15 @@ class ThicknessCalculationForm
                             'hand_layup'       => 'Hand Layup (HLU)',
                         ]),
 
+                    Select::make('technology_id')
+                        ->label('Pilih Technology')
+                        ->options(fn() => \App\Models\MasterTechnology::pluck('technology_option', 'id'))
+                        ->searchable()
+                        ->preload()
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn($get, $set) => self::updateBrandName($get, $set)),
+
                     Select::make('application_ids')
                         ->label('Application')
                         ->multiple()
@@ -209,6 +260,44 @@ class ThicknessCalculationForm
                         ->preload()
                         ->columnSpan(2),
                 ]),
+
+            Section::make('Resin Option')
+                ->extraAttributes(['class' => 'thickness-form-section'])
+                ->columns(2)
+                ->schema([
+                    Select::make('liner_resin_id')
+                        ->label('Liner Resin Type')
+                        ->options(fn() => \App\Models\MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
+                        ->searchable()
+                        ->preload()
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn($get, $set) => self::updateBrandName($get, $set)),
+
+                    Select::make('structure_resin_id')
+                        ->label('Structure Resin Type')
+                        ->options(fn() => \App\Models\MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+
+                    Select::make('external_resin_id')
+                        ->label('External Resin Type')
+                        ->options(fn() => \App\Models\MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
+                        ->visible(fn($get) => $get('use_external'))
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+
+                    Select::make('top_coat_resin_id')
+                        ->label('Top Coat Resin Type')
+                        ->options(fn() => \App\Models\MasterMaterialType::where('category_types', 1)->pluck('type_name', 'id'))
+                        ->visible(fn($get) => $get('use_top_coat'))
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+                ]),
+
         ]);
     }
 }
