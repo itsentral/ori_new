@@ -55,4 +55,14 @@ class MasterTechnologyResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Master Data';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Master Technologies';
+    }
 }
