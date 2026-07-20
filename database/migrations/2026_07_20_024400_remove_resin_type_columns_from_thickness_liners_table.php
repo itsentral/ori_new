@@ -13,34 +13,36 @@ return new class extends Migration
     {
         Schema::table('thickness_liners', function (Blueprint $table) {
             // Drop foreign keys first if they exist
-            // Cek apakah FK material_type_id ada sebelum didrop
-            $hasMaterialTypeFk = !empty(\Illuminate\Support\Facades\DB::select("
+            // Cek FK untuk material_type_id berdasarkan COLUMN_NAME
+            $materialTypeFks = \Illuminate\Support\Facades\DB::select("
                 SELECT CONSTRAINT_NAME 
                 FROM information_schema.KEY_COLUMN_USAGE 
                 WHERE TABLE_SCHEMA = DATABASE() 
                   AND TABLE_NAME = 'thickness_liners' 
-                  AND CONSTRAINT_NAME = 'thickness_liners_material_type_id_foreign'
-            "));
+                  AND COLUMN_NAME = 'material_type_id'
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+            ");
 
             if (Schema::hasColumn('thickness_liners', 'material_type_id')) {
-                if ($hasMaterialTypeFk) {
-                    $table->dropForeign('thickness_liners_material_type_id_foreign');
+                foreach ($materialTypeFks as $fk) {
+                    $table->dropForeign($fk->CONSTRAINT_NAME);
                 }
                 $table->dropColumn('material_type_id');
             }
             
-            // Cek apakah FK material_id ada sebelum didrop
-            $hasMaterialIdFk = !empty(\Illuminate\Support\Facades\DB::select("
+            // Cek FK untuk material_id berdasarkan COLUMN_NAME
+            $materialIdFks = \Illuminate\Support\Facades\DB::select("
                 SELECT CONSTRAINT_NAME 
                 FROM information_schema.KEY_COLUMN_USAGE 
                 WHERE TABLE_SCHEMA = DATABASE() 
                   AND TABLE_NAME = 'thickness_liners' 
-                  AND CONSTRAINT_NAME = 'thickness_liners_material_id_foreign'
-            "));
+                  AND COLUMN_NAME = 'material_id'
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+            ");
 
             if (Schema::hasColumn('thickness_liners', 'material_id')) {
-                if ($hasMaterialIdFk) {
-                    $table->dropForeign('thickness_liners_material_id_foreign');
+                foreach ($materialIdFks as $fk) {
+                    $table->dropForeign($fk->CONSTRAINT_NAME);
                 }
                 $table->dropColumn('material_id');
             }
