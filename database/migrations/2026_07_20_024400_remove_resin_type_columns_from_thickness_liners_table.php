@@ -13,13 +13,35 @@ return new class extends Migration
     {
         Schema::table('thickness_liners', function (Blueprint $table) {
             // Drop foreign keys first if they exist
+            // Cek apakah FK material_type_id ada sebelum didrop
+            $hasMaterialTypeFk = !empty(\Illuminate\Support\Facades\DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                  AND TABLE_NAME = 'thickness_liners' 
+                  AND CONSTRAINT_NAME = 'thickness_liners_material_type_id_foreign'
+            "));
+
             if (Schema::hasColumn('thickness_liners', 'material_type_id')) {
-                $table->dropForeign(['material_type_id']);
+                if ($hasMaterialTypeFk) {
+                    $table->dropForeign('thickness_liners_material_type_id_foreign');
+                }
                 $table->dropColumn('material_type_id');
             }
             
+            // Cek apakah FK material_id ada sebelum didrop
+            $hasMaterialIdFk = !empty(\Illuminate\Support\Facades\DB::select("
+                SELECT CONSTRAINT_NAME 
+                FROM information_schema.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                  AND TABLE_NAME = 'thickness_liners' 
+                  AND CONSTRAINT_NAME = 'thickness_liners_material_id_foreign'
+            "));
+
             if (Schema::hasColumn('thickness_liners', 'material_id')) {
-                $table->dropForeign(['material_id']);
+                if ($hasMaterialIdFk) {
+                    $table->dropForeign('thickness_liners_material_id_foreign');
+                }
                 $table->dropColumn('material_id');
             }
 
